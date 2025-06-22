@@ -11,12 +11,16 @@ public class PlayerMain : MonoBehaviour
     public Rigidbody2D rb;
     public int jumpStrength;
     public bool canJump;
+    public float baseMovementSpeed = 3;
+    private float _movementSpeed;
     private bool _onGround;
     // stats
     public int healthPoints;
     // input
     public InputSystemActions inputActions;
     private InputAction _jump;
+    private InputAction _move;
+    private Vector2 _moveInput;
 
     // Creating helper instances
     private void Awake()
@@ -29,21 +33,26 @@ public class PlayerMain : MonoBehaviour
         _jump = inputActions.Player.Jump;
         _jump.Enable();
         _jump.performed += Jump;
+        _move = inputActions.Player.Move;
+        _move.Enable();
+        _move.performed += Move;
+        _move.canceled += Stop;
     }
 
     private void OnDisable()
     {
         _jump.Disable();
+        _move.Disable();
     }
 
-    void Start()
+    private void Start()
     {
-
+        _movementSpeed = baseMovementSpeed;
     }
 
-    void Update()
+    private void Update()
     {
-
+        transform.Translate(_moveInput * Time.deltaTime);
     }
 
     public void Attack()
@@ -53,12 +62,21 @@ public class PlayerMain : MonoBehaviour
 
     private void Jump(InputAction.CallbackContext context)
     {
-        if (context.performed && _onGround)
+        if (_onGround)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpStrength);
         }
     }
 
+    private void Move(InputAction.CallbackContext context)
+    {
+        _moveInput = new Vector2(context.ReadValue<Vector2>().x, 0) * _movementSpeed;
+    }
+
+    private void Stop(InputAction.CallbackContext context)
+    {
+        _moveInput = Vector2.zero;
+    }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
@@ -67,7 +85,6 @@ public class PlayerMain : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        Debug.Log("OnCollisionExit2D");
         _onGround = false;
     }
 
