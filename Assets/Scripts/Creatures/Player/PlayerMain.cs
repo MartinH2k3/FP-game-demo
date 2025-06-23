@@ -27,6 +27,7 @@ public class PlayerMain : MonoBehaviour
     private InputAction _jump;
     private InputAction _move;
     private Vector2 _moveInput;
+    private InputAction _sprint;
 
     // Creating helper instances
     private void Awake()
@@ -42,7 +43,11 @@ public class PlayerMain : MonoBehaviour
         _move = _inputActions.Player.Move;
         _move.Enable();
         _move.performed += Move;
-        _move.canceled += Stop;
+        _move.canceled += Move;
+        _sprint = _inputActions.Player.Sprint;
+        _sprint.Enable();
+        _sprint.performed += Sprint;
+        _sprint.canceled += Sprint;
     }
 
     private void OnDisable()
@@ -58,7 +63,7 @@ public class PlayerMain : MonoBehaviour
 
     private void Update()
     {
-        transform.Translate(_moveInput * Time.deltaTime);
+        rb.linearVelocity = new Vector2(_moveInput.x * _movementSpeed, rb.linearVelocity.y);
         _activeJumpCooldown = Math.Max(_activeJumpCooldown - Time.deltaTime, 0);
 
     }
@@ -93,12 +98,14 @@ public class PlayerMain : MonoBehaviour
 
     private void Move(InputAction.CallbackContext context)
     {
-        _moveInput = new Vector2(context.ReadValue<Vector2>().x, 0) * _movementSpeed;
+        if (context.performed) _moveInput = new Vector2(context.ReadValue<Vector2>().x, 0);
+        else if (context.canceled) _moveInput = Vector2.zero;
     }
 
-    private void Stop(InputAction.CallbackContext context)
+    private void Sprint(InputAction.CallbackContext context)
     {
-        _moveInput = Vector2.zero;
+        if (context.performed) _movementSpeed = baseMovementSpeed * 2;
+        else if (context.canceled) _movementSpeed = baseMovementSpeed;
     }
 
     private void OnCollisionStay2D(Collision2D collision)
