@@ -1,13 +1,14 @@
 # Week 1: 23.6.
 - [ ] Finish movement mechanics
-  - [ ] Walking
-  - [ ] Wall Jumping
+  - [x] Walking
+  - [x] Wall Jumping
   - [ ] Dashing
   - [ ] Climbing
-  - [ ] Running
+  - [x] Running
 - [ ] Design HUD
   - [ ] Health Bar
   - [ ] Gold tracker
+  - [ ] Ability availability (for now, mostly for wall jumping)
 - [ ] Brainstorm mechanics limiting unlimited casting
   - Mana / Cooldowns / Charges per match / Self-inflicted damage
 
