@@ -14,12 +14,14 @@ public class PlayerMain : MonoBehaviour
     public float baseMovementSpeed = 3;
     private float _movementSpeed;
         // jumping
-    private bool _onGround;
+    public bool _onGround;
     private float _activeJumpCooldown;
             // wall jumping
     public bool _touchingRightWall;
     public bool _touchingLeftWall;
-    public int _lastWallJump; // -1: left wall, 1: right wall, 0: no wall jump
+    public int _lastWallJump; // -1: left wall, 1: right wall, 0: no
+        // climbing
+    public bool _canClimb;
     // stats
     public int healthPoints;
     // input
@@ -63,7 +65,15 @@ public class PlayerMain : MonoBehaviour
 
     private void Update()
     {
-        rb.linearVelocity = new Vector2(_moveInput.x * _movementSpeed, rb.linearVelocity.y);
+        if (_canClimb) {
+            rb.gravityScale = 0;
+            rb.linearVelocity = new Vector2(_moveInput.x * _movementSpeed, _moveInput.y * _movementSpeed);
+        } else
+        {
+            rb.gravityScale = 1;
+            // using Math instead of Mathf, because in Update() method, Mathf.Sign(0) returns 1 (some sort of bug)
+            rb.linearVelocity = new Vector2(Math.Sign(_moveInput.x) * _movementSpeed, rb.linearVelocity.y);
+        }
         _activeJumpCooldown = Math.Max(_activeJumpCooldown - Time.deltaTime, 0);
 
     }
@@ -98,7 +108,7 @@ public class PlayerMain : MonoBehaviour
 
     private void Move(InputAction.CallbackContext context)
     {
-        if (context.performed) _moveInput = new Vector2(context.ReadValue<Vector2>().x, 0);
+        if (context.performed) _moveInput = context.ReadValue<Vector2>();
         else if (context.canceled) _moveInput = Vector2.zero;
     }
 
@@ -112,35 +122,67 @@ public class PlayerMain : MonoBehaviour
     {
         EvaluateCollision(collision);
     }
-
     private void OnCollisionExit2D(Collision2D collision)
+    {
+        CancelCollisions(collision);
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        EvaluateTrigger(collision);
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        Debug.Log("Exited");
+        CancelTriggers();
+    }
+
+    // silly little function name
+    private void EvaluateCollision(Collision2D collision)
+    {
+        var layerName = LayerMask.LayerToName(collision.gameObject.layer);
+        switch (layerName)
+        {
+            case "Wall":
+                foreach (var contact in collision.contacts)
+                {
+                    if (contact.normal.y > 0.5f)
+                    {
+                        _onGround = true;
+                    }
+
+                    // still using Math.Abs if we want to add more functionality for wall touch later
+                    if (Math.Abs(contact.normal.x) > 0.5f)
+                    {
+                        if (contact.normal.x > 0) _touchingRightWall = true;
+                        else if (contact.normal.x < 0) _touchingLeftWall = true;
+
+                    }
+                }
+                break;
+        }
+    }
+
+    private void CancelCollisions(Collision2D collision)
     {
         _onGround = false;
         _touchingRightWall = false;
         _touchingLeftWall = false;
     }
 
-
-    // silly little function name
-    private void EvaluateCollision(Collision2D collision)
+    private void EvaluateTrigger(Collider2D collision)
     {
-        if (collision.gameObject.layer != 3) return;
-
-        foreach (var contact in collision.contacts)
+        var layerName = LayerMask.LayerToName(collision.gameObject.layer);
+        switch (layerName)
         {
-            if (contact.normal.y > 0.5f)
-            {
-                _onGround = true;
-                _lastWallJump = 0;
-            }
-            // still using Math.Abs if we want to add more functionality for wall touch later
-            if (Math.Abs(contact.normal.x) > 0.5f)
-            {
-                if (contact.normal.x > 0) _touchingRightWall = true;
-                else if (contact.normal.x < 0) _touchingLeftWall = true;
-            }
+            case "Climbable":
+                _canClimb = true;
+                break;
         }
     }
 
+    private void CancelTriggers()
+    {
+        _canClimb = false;
+    }
 }
 }
