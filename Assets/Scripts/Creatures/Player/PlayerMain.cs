@@ -1,4 +1,5 @@
 using System;
+using Managers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,14 +15,15 @@ public class PlayerMain : MonoBehaviour
     public float baseMovementSpeed = 3;
     private float _movementSpeed;
         // jumping
-    public bool _onGround;
+    private bool _onGround;
     private float _activeJumpCooldown;
+    private bool _doubleJumped;
             // wall jumping
-    public bool _touchingRightWall;
-    public bool _touchingLeftWall;
-    public int _lastWallJump; // -1: left wall, 1: right wall, 0: no
+    private bool _touchingRightWall;
+    private bool _touchingLeftWall;
+    private int _lastWallJump; // -1: left wall, 1: right wall, 0: no
         // climbing
-    public bool _canClimb;
+    private bool _canClimb;
     // stats
     public int healthPoints;
     // input
@@ -85,19 +87,29 @@ public class PlayerMain : MonoBehaviour
 
     private void Jump(InputAction.CallbackContext context)
     {
-        if ((CanWallJump() || _onGround) && _activeJumpCooldown == 0)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpStrength);
-            _activeJumpCooldown = jumpCooldown;
+        if (!CanJump()) return;
 
-            if (_onGround) {
-                _lastWallJump = 0;
-            } else if (_touchingRightWall) {
-                _lastWallJump = 1;
-            } else if (_touchingLeftWall) {
-                _lastWallJump = -1;
-            }
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpStrength);
+        _activeJumpCooldown = jumpCooldown;
+
+        if (_onGround) {
+            _lastWallJump = 0;
+        } else if (!CanWallJump()){
+            _doubleJumped = true;
+        } else if (_touchingRightWall) {
+            _lastWallJump = 1;
+            _doubleJumped = false;
+        } else if (_touchingLeftWall) {
+            _lastWallJump = -1;
+            _doubleJumped = false;
         }
+
+    }
+
+    // public as it will be displayed in HUD
+    public bool CanJump()
+    {
+        return (CanWallJump() || _onGround || (GameManager.Instance.SkillData.IsUnlocked(Skill.DoubleJump) && !_doubleJumped)) && _activeJumpCooldown == 0;
     }
 
     private bool CanWallJump()
@@ -148,6 +160,7 @@ public class PlayerMain : MonoBehaviour
                     if (contact.normal.y > 0.5f)
                     {
                         _onGround = true;
+                        ResetJump();
                     }
 
                     // still using Math.Abs if we want to add more functionality for wall touch later
@@ -183,6 +196,14 @@ public class PlayerMain : MonoBehaviour
     private void CancelTriggers()
     {
         _canClimb = false;
+    }
+
+    // After touching the floor, jumping restrictions are reset
+    private void ResetJump()
+    {
+        _doubleJumped = false;
+        _lastWallJump = 0;
+        _activeJumpCooldown = 0;
     }
 }
 }
