@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Creatures.Player
 {
@@ -7,16 +8,33 @@ namespace Creatures.Player
 [Serializable]
 public class SkillUnlocks
 {
-    public Dictionary<Skill, bool> Abilities = new();
+    public List<Skill> unlockedSkills = new();
+    private Dictionary<Skill, bool> _skills = new();
+
+    public void Init()
+    {
+        // Initialize all skills as locked
+        foreach (Skill skill in Enum.GetValues(typeof(Skill)))
+        {
+            _skills[skill] = unlockedSkills.Contains(skill);
+        }
+    }
 
     public bool IsUnlocked(Skill skill) =>
-        Abilities.TryGetValue(skill, out var unlocked) && unlocked;
+        _skills.TryGetValue(skill, out var unlocked) && unlocked;
 
     public void Unlock(Skill skill) =>
-        Abilities[skill] = true;
+        _skills[skill] = true;
 
     public void Lock(Skill skill) =>
-        Abilities[skill] = false;
+        _skills[skill] = false;
+
+    public List<Skill> AllSkills()
+    {
+        List<Skill> skills = new();
+        foreach (Skill skill in Enum.GetValues(typeof(Skill))) skills.Add(skill);
+        return skills;
+    }
 }
 
 }
