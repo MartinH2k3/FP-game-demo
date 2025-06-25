@@ -13,8 +13,7 @@ public class GameManager : MonoBehaviour
     public SkillUnlocks SkillData { get; private set; }
     private string _skillDataPath;
 
-    private void Awake()
-    {
+    private void Awake() {
         // Singleton enforcement
         if (Instance != null && Instance != this)
         {
@@ -29,8 +28,7 @@ public class GameManager : MonoBehaviour
         LoadSkillData();
     }
 
-    public void LoadSkillData()
-    {
+    public void LoadSkillData() {
         if (File.Exists(_skillDataPath))
         {
             var json = File.ReadAllText(_skillDataPath);
@@ -45,8 +43,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void SaveSkillData()
-    {
+    public void SaveSkillData() {
         var json = JsonUtility.ToJson(SkillData, true);
         File.WriteAllText(_skillDataPath, json);
     }
