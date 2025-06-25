@@ -11,8 +11,7 @@ public class SkillUnlocks
     public List<Skill> unlockedSkills = new();
     private Dictionary<Skill, bool> _skills = new();
 
-    public void Init()
-    {
+    public void Init() {
         // Initialize all skills as locked
         foreach (Skill skill in Enum.GetValues(typeof(Skill)))
         {
@@ -29,8 +28,7 @@ public class SkillUnlocks
     public void Lock(Skill skill) =>
         _skills[skill] = false;
 
-    public List<Skill> AllSkills()
-    {
+    public List<Skill> AllSkills() {
         List<Skill> skills = new();
         foreach (Skill skill in Enum.GetValues(typeof(Skill))) skills.Add(skill);
         return skills;

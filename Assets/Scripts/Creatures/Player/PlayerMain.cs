@@ -34,13 +34,11 @@ public class PlayerMain : MonoBehaviour
     private InputAction _sprint;
 
     // Creating helper instances
-    private void Awake()
-    {
+    private void Awake() {
         _inputActions = new InputSystemActions();
     }
 
-    private void OnEnable()
-    {
+    private void OnEnable() {
         _jump = _inputActions.Player.Jump;
         _jump.Enable();
         _jump.performed += Jump;
@@ -54,19 +52,16 @@ public class PlayerMain : MonoBehaviour
         _sprint.canceled += Sprint;
     }
 
-    private void OnDisable()
-    {
+    private void OnDisable() {
         _jump.Disable();
         _move.Disable();
     }
 
-    private void Start()
-    {
+    private void Start() {
         _movementSpeed = baseMovementSpeed;
     }
 
-    private void Update()
-    {
+    private void Update() {
         if (_canClimb) {
             rb.gravityScale = 0;
             rb.linearVelocity = new Vector2(_moveInput.x * _movementSpeed, _moveInput.y * _movementSpeed);
@@ -80,13 +75,11 @@ public class PlayerMain : MonoBehaviour
 
     }
 
-    public void Attack()
-    {
+    public void Attack() {
 
     }
 
-    private void Jump(InputAction.CallbackContext context)
-    {
+    private void Jump(InputAction.CallbackContext context) {
         if (!CanJump()) return;
 
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpStrength);
@@ -107,50 +100,44 @@ public class PlayerMain : MonoBehaviour
     }
 
     // public as it will be displayed in HUD
-    public bool CanJump()
-    {
+    public bool CanJump() {
         return (CanWallJump() || _onGround || (GameManager.Instance.SkillData.IsUnlocked(Skill.DoubleJump) && !_doubleJumped)) && _activeJumpCooldown == 0;
     }
 
-    private bool CanWallJump()
-    {
+    private bool CanWallJump() {
         return _touchingLeftWall && _lastWallJump != -1 ||
                _touchingRightWall && _lastWallJump != 1;
     }
 
-    private void Move(InputAction.CallbackContext context)
-    {
-        if (context.performed) _moveInput = context.ReadValue<Vector2>();
-        else if (context.canceled) _moveInput = Vector2.zero;
+    private void Move(InputAction.CallbackContext context) {
+        if (context.performed) {
+            _moveInput = context.ReadValue<Vector2>();
+        } else if (context.canceled) {
+            _moveInput = Vector2.zero;
+        }
     }
 
-    private void Sprint(InputAction.CallbackContext context)
-    {
+    private void Sprint(InputAction.CallbackContext context) {
         if (context.performed) _movementSpeed = baseMovementSpeed * 2;
         else if (context.canceled) _movementSpeed = baseMovementSpeed;
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
-    {
+    private void OnCollisionStay2D(Collision2D collision) {
         EvaluateCollision(collision);
     }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
+    private void OnCollisionExit2D(Collision2D collision) {
         CancelCollisions(collision);
     }
-    private void OnTriggerStay2D(Collider2D collision)
-    {
+    private void OnTriggerStay2D(Collider2D collision) {
         EvaluateTrigger(collision);
     }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
+    private void OnTriggerExit2D(Collider2D collision) {
         Debug.Log("Exited");
         CancelTriggers();
     }
 
     // silly little function name
-    private void EvaluateCollision(Collision2D collision)
-    {
+    private void EvaluateCollision(Collision2D collision) {
         var layerName = LayerMask.LayerToName(collision.gameObject.layer);
         switch (layerName)
         {
@@ -175,15 +162,13 @@ public class PlayerMain : MonoBehaviour
         }
     }
 
-    private void CancelCollisions(Collision2D collision)
-    {
+    private void CancelCollisions(Collision2D collision) {
         _onGround = false;
         _touchingRightWall = false;
         _touchingLeftWall = false;
     }
 
-    private void EvaluateTrigger(Collider2D collision)
-    {
+    private void EvaluateTrigger(Collider2D collision) {
         var layerName = LayerMask.LayerToName(collision.gameObject.layer);
         switch (layerName)
         {
@@ -193,14 +178,12 @@ public class PlayerMain : MonoBehaviour
         }
     }
 
-    private void CancelTriggers()
-    {
+    private void CancelTriggers() {
         _canClimb = false;
     }
 
     // After touching the floor, jumping restrictions are reset
-    private void ResetJump()
-    {
+    private void ResetJump() {
         _doubleJumped = false;
         _lastWallJump = 0;
         _activeJumpCooldown = 0;

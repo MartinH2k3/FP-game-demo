@@ -1,7 +1,6 @@
 ﻿namespace Creatures.Player
 {
-    public enum Skill
-    {
+    public enum Skill {
         DoubleJump,
         WallJump,
         AirDash
