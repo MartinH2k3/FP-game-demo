@@ -32,6 +32,8 @@ public class PlayerMain : MonoBehaviour
     private InputAction _move;
     private Vector2 _moveInput;
     private InputAction _sprint;
+    // visual
+    private bool _isFacingRight = true; // used for flipping the sprite
 
     // Creating helper instances
     private void Awake() {
@@ -112,6 +114,14 @@ public class PlayerMain : MonoBehaviour
     private void Move(InputAction.CallbackContext context) {
         if (context.performed) {
             _moveInput = context.ReadValue<Vector2>();
+            // Flip the sprite based on movement direction
+            if (_moveInput.x > 0 && !_isFacingRight) {
+                _isFacingRight = true;
+                transform.localScale = new Vector3(1, transform.localScale.y, transform.localScale.z);
+            } else if (_moveInput.x < 0 && _isFacingRight) {
+                _isFacingRight = false;
+                transform.localScale = new Vector3(-1, transform.localScale.y, transform.localScale.z);
+            }
         } else if (context.canceled) {
             _moveInput = Vector2.zero;
         }
@@ -132,7 +142,6 @@ public class PlayerMain : MonoBehaviour
         EvaluateTrigger(collision);
     }
     private void OnTriggerExit2D(Collider2D collision) {
-        Debug.Log("Exited");
         CancelTriggers();
     }
 
