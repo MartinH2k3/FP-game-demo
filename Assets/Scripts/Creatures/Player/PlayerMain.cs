@@ -1,5 +1,6 @@
 using System;
 using Managers;
+using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,12 +11,13 @@ public class PlayerMain : MonoBehaviour
 {
     // controls
     public Rigidbody2D rb;
-    public int jumpStrength;
-    public float jumpCooldown = 0.2f;
+    // movement
     public float baseMovementSpeed = 3;
     private float _movementSpeed;
         // jumping
     private bool _onGround;
+    public int jumpStrength = 5;
+    public float jumpCooldown = 0.2f;
     private float _activeJumpCooldown;
     private bool _doubleJumped;
             // wall jumping
@@ -35,7 +37,8 @@ public class PlayerMain : MonoBehaviour
     // climbing
     private bool _canClimb;
     // stats
-    public int healthPoints;
+    public BaseStats baseStats;
+    public int healthPoints = 100;
     // input
     private InputSystemActions _inputActions;
     private InputAction _jump;
@@ -65,6 +68,9 @@ public class PlayerMain : MonoBehaviour
         _sprint.Enable();
         _sprint.performed += Sprint;
         _sprint.canceled += Sprint;
+        _dash = _inputActions.Player.Dash;
+        _dash.Enable();
+        _dash.performed += Dash;
     }
 
     private void OnDisable() {
@@ -249,5 +255,18 @@ public class PlayerMain : MonoBehaviour
         _activeJumpCooldown = 0;
         _dashedInAir = false;
     }
+
+
+    // Combat
+    public void TakeDamage(int damage) {
+        healthPoints -= damage;
+        uiManager.SetHealth(healthPoints, baseStats.healthPoints);
+    }
+
+    public void Heal(int health) {
+        healthPoints += health;
+        uiManager.SetHealth(healthPoints, baseStats.healthPoints);
+    }
+
 }
 }
