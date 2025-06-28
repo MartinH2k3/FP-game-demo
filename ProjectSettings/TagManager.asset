@@ -11,7 +11,7 @@ TagManager:
   - Wall
   - Water
   - UI
-  - 
+  - Climbable
   - 
   - 
   - 
@@ -38,6 +38,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Climbables
+    uniqueID: 1007350947
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
