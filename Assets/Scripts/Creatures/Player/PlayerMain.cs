@@ -34,6 +34,8 @@ public class PlayerMain : MonoBehaviour
     private InputAction _sprint;
     // visual
     private bool _isFacingRight = true; // used for flipping the sprite
+    public Animator animator;
+    [SerializeField] private UIManager uiManager;
 
     // Creating helper instances
     private void Awake() {
@@ -64,6 +66,18 @@ public class PlayerMain : MonoBehaviour
     }
 
     private void Update() {
+        HandleMovement();
+        SyncAnimator();
+    }
+
+    private void SyncAnimator() {
+        animator.SetBool("OnGround", _onGround);
+        animator.SetBool("TouchingRightWall", _touchingRightWall);
+        animator.SetBool("TouchingLeftWall", _touchingLeftWall);
+        animator.SetBool("Moving", _moveInput.x != 0);
+    }
+
+    private void HandleMovement() {
         if (_canClimb) {
             rb.gravityScale = 0;
             rb.linearVelocity = new Vector2(_moveInput.x * _movementSpeed, _moveInput.y * _movementSpeed);
