@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -7,6 +8,8 @@ namespace UI
 public class UIManager : MonoBehaviour
 {
     private HealthBar _healthBar;
+    [SerializeField] private Image jumpAvailable;
+    [SerializeField] private Image jumpUnavailable;
 
     private void Awake() {
         _healthBar = GetComponentInChildren<HealthBar>();
@@ -16,6 +19,11 @@ public class UIManager : MonoBehaviour
         if (_healthBar != null) {
             _healthBar.SetHealth(health, maxHealth);
         }
+    }
+
+    public void SetJumpAvailable(bool available) {
+        if (jumpAvailable != null) jumpAvailable.gameObject.SetActive(available);
+        if (jumpUnavailable != null) jumpUnavailable.gameObject.SetActive(!available);
     }
 }
 
