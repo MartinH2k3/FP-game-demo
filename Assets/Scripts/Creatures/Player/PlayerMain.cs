@@ -92,6 +92,7 @@ public class PlayerMain : MonoBehaviour
         animator.SetBool("TouchingRightWall", _touchingRightWall);
         animator.SetBool("TouchingLeftWall", _touchingLeftWall);
         animator.SetBool("Moving", _moveInput.x != 0);
+        animator.SetBool("Climbing", _canClimb);
         uiManager.SetJumpAvailable(CanJump());
     }
 
