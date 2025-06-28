@@ -17,7 +17,7 @@ public class PlayerMain : MonoBehaviour
         // jumping
     private bool _onGround;
     public int jumpStrength = 5;
-    public float jumpCooldown = 0.2f;
+    [SerializeField] private float jumpCooldown = 0.2f;
     private float _activeJumpCooldown;
     private bool _doubleJumped;
             // wall jumping
@@ -26,8 +26,8 @@ public class PlayerMain : MonoBehaviour
     private int _lastWallJump; // -1: left wall, 1: right wall, 0: no
     // dashing
     public float dashStrength = 15f;
-    public float dashCooldown = 1f;
-    public float dashDuration = 0.2f; // duration of the dash
+    [SerializeField] private float dashCooldown = 1f;
+    [SerializeField] private float dashDuration = 0.2f; // duration of the dash
     private float _activeDashCooldown;
     private float _activeDashDuration;
     private bool _dashedInAir; // in air, only one dash possible
@@ -48,7 +48,7 @@ public class PlayerMain : MonoBehaviour
     private InputAction _dash;
     // visual && animations
     private bool _isFacingRight = true; // used for flipping the sprite
-    public Animator animator;
+    [SerializeField] private Animator animator;
     [SerializeField] private UIManager uiManager;
 
     // Creating helper instances
@@ -141,7 +141,7 @@ public class PlayerMain : MonoBehaviour
     }
 
     // public as it will be displayed in HUD
-    public bool CanJump() {
+    private bool CanJump() {
         return (CanWallJump() || _onGround || (GameManager.Instance.SkillData.IsUnlocked(Skill.DoubleJump) && !_doubleJumped))
                && _activeJumpCooldown == 0
                && !_isDashing;
