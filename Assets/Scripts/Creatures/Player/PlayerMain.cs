@@ -84,14 +84,15 @@ public class PlayerMain : MonoBehaviour
 
     private void Update() {
         HandleMovement();
-        SyncAnimator();
+        SyncVisuals();
     }
 
-    private void SyncAnimator() {
+    private void SyncVisuals() {
         animator.SetBool("OnGround", _onGround);
         animator.SetBool("TouchingRightWall", _touchingRightWall);
         animator.SetBool("TouchingLeftWall", _touchingLeftWall);
         animator.SetBool("Moving", _moveInput.x != 0);
+        uiManager.SetJumpAvailable(CanJump());
     }
 
     private void HandleMovement() {
