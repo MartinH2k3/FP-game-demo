@@ -1,16 +1,36 @@
 # Week 1: 23.6.
-- [ ] Finish movement mechanics
+- [x] Finish movement mechanics
   - [x] Walking
   - [x] Wall Jumping
-  - [ ] Dashing
-  - [ ] Climbing
+  - [x] Skills
+    - [x] Double Jump
+    - [x] Dashing
+  - [x] Climbing
   - [x] Running
-- [ ] Design HUD
-  - [ ] Health Bar
+- [ ] Design HUD (Figma for now)
+  - [x] Health Bar
   - [ ] Gold tracker
-  - [ ] Ability availability (for now, mostly for wall jumping)
-- [ ] Brainstorm mechanics limiting unlimited casting
+  - [x] Ability availability (for now, mostly for wall jumping)
+- [x] Brainstorm mechanics limiting unlimited casting
   - Mana / Cooldowns / Charges per match / Self-inflicted damage
+
+
+# Week 2: 30.6.
+- [ ] Enemy
+  - [ ] Basic Enemy Code (Beans for now)
+    - [ ] Walk toward player, explode on contact
+    - [ ] Archer, stationary, shoots arrows at player
+    - [ ] Mage, stationary, shoots fireballs at player
+    - [ ] Swordsman, walks toward player, attacks with sword
+  - [ ] Boss 
+    - [ ] 3 boss ideas
+
+
+# Week 3: 7.7.
+- [ ] Design and implement inventory system
+  - [ ] Inventory UI
+  - [ ] Item management (add/remove items)
+  - [ ] Item types (weapons, potions, etc.)
 
 
 # Unassigned
@@ -30,6 +50,10 @@
 ## Game mechanics
 - [ ] Scene swapping
 - [ ] Game state management
+- [ ] Progress Manager
+  - [ ] Unlockable skills
+  - [ ] Levels
+
 ## Audio
 - [ ] Audio manager
 - [ ] Soundtrack
