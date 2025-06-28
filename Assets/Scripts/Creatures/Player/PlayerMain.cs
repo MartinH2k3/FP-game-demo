@@ -22,7 +22,17 @@ public class PlayerMain : MonoBehaviour
     private bool _touchingRightWall;
     private bool _touchingLeftWall;
     private int _lastWallJump; // -1: left wall, 1: right wall, 0: no
-        // climbing
+    // dashing
+    public float dashStrength = 15f;
+    public float dashCooldown = 1f;
+    public float dashDuration = 0.2f; // duration of the dash
+    private float _activeDashCooldown;
+    private float _activeDashDuration;
+    private bool _dashedInAir; // in air, only one dash possible
+        // dash implementation
+    private Vector2 _dashVelocity;
+    private bool _isDashing;
+    // climbing
     private bool _canClimb;
     // stats
     public int healthPoints;
@@ -32,7 +42,8 @@ public class PlayerMain : MonoBehaviour
     private InputAction _move;
     private Vector2 _moveInput;
     private InputAction _sprint;
-    // visual
+    private InputAction _dash;
+    // visual && animations
     private bool _isFacingRight = true; // used for flipping the sprite
     public Animator animator;
     [SerializeField] private UIManager uiManager;
@@ -81,14 +92,20 @@ public class PlayerMain : MonoBehaviour
         if (_canClimb) {
             rb.gravityScale = 0;
             rb.linearVelocity = new Vector2(_moveInput.x * _movementSpeed, _moveInput.y * _movementSpeed);
-        } else
-        {
+        } else if (_isDashing) {
+            _activeDashDuration = Math.Max(_activeDashDuration - Time.deltaTime, 0);
+            if (_activeDashDuration <= 0) {
+                rb.linearVelocity = Vector2.zero;
+                _isDashing = false;
+            }
+        }
+        else {
             rb.gravityScale = 1;
             // using Math instead of Mathf, because in Update() method, Mathf.Sign(0) returns 1 (some sort of bug)
             rb.linearVelocity = new Vector2(Math.Sign(_moveInput.x) * _movementSpeed, rb.linearVelocity.y);
         }
         _activeJumpCooldown = Math.Max(_activeJumpCooldown - Time.deltaTime, 0);
-
+        _activeDashCooldown = Math.Max(_activeDashCooldown - Time.deltaTime, 0);
     }
 
     public void Attack() {
@@ -117,12 +134,32 @@ public class PlayerMain : MonoBehaviour
 
     // public as it will be displayed in HUD
     public bool CanJump() {
-        return (CanWallJump() || _onGround || (GameManager.Instance.SkillData.IsUnlocked(Skill.DoubleJump) && !_doubleJumped)) && _activeJumpCooldown == 0;
+        return (CanWallJump() || _onGround || (GameManager.Instance.SkillData.IsUnlocked(Skill.DoubleJump) && !_doubleJumped))
+               && _activeJumpCooldown == 0
+               && !_isDashing;
     }
 
     private bool CanWallJump() {
         return _touchingLeftWall && _lastWallJump != -1 ||
                _touchingRightWall && _lastWallJump != 1;
+    }
+
+    private void Dash(InputAction.CallbackContext context) {
+        if (context.performed) {
+            if (!CanDash()) return;
+
+            _isDashing = true;
+            _dashedInAir = !_onGround;
+            _activeDashCooldown = dashCooldown;
+            _activeDashDuration = dashDuration;
+
+            _dashVelocity = new Vector2(_isFacingRight ? dashStrength : -dashStrength, 0);
+            rb.linearVelocity = _dashVelocity;
+        }
+    }
+
+    private bool CanDash() {
+        return _activeDashCooldown <= 0 && (_onGround || !_dashedInAir);
     }
 
     private void Move(InputAction.CallbackContext context) {
@@ -210,6 +247,7 @@ public class PlayerMain : MonoBehaviour
         _doubleJumped = false;
         _lastWallJump = 0;
         _activeJumpCooldown = 0;
+        _dashedInAir = false;
     }
 }
 }
