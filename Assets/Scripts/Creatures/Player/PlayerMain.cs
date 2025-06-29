@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 namespace Creatures.Player
 {
 
-public class PlayerMain : Creature
+public class PlayerMain : Character
 {
     // movement
     public float baseMovementSpeed = 3;
@@ -255,13 +255,13 @@ public class PlayerMain : Creature
 
 
     // Combat
-    public void TakeDamage(int damage) {
-        healthPoints -= damage;
+    public override void TakeDamage(int damage) {
+        base.TakeDamage(damage);
         uiManager.SetHealth(healthPoints, baseStats.healthPoints);
     }
 
-    public void Heal(int health) {
-        healthPoints += health;
+    public override void Heal(int health) {
+        base.Heal(health);
         uiManager.SetHealth(healthPoints, baseStats.healthPoints);
     }
 

@@ -2,7 +2,7 @@
 
 namespace Creatures
 {
-public class Creature: MonoBehaviour
+public class Character: MonoBehaviour
 {
     [SerializeField] protected int maxHealthPoints = 100;
     [SerializeField] protected int healthPoints;
@@ -39,10 +39,18 @@ public class Creature: MonoBehaviour
 
     public void SetVelocity(float x, float y)
     {
-        if (rb != null)
+        if (rb is not null)
         {
             rb.linearVelocity = new Vector2(x, y);
         }
+    }
+
+    public virtual void TakeDamage(int damage) {
+        healthPoints -= damage;
+    }
+
+    public virtual void Heal(int health) {
+        healthPoints += health;
     }
 }
 }

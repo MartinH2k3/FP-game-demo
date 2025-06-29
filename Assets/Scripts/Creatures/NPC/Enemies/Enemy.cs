@@ -2,21 +2,18 @@
 
 namespace Creatures.NPC.Enemies
 {
-public abstract class Enemy: Creature
+public abstract class Enemy: Character
 {
 
-    public void TakeDamage(int damage)
+    public override void TakeDamage(int damage)
     {
-        healthPoints -= damage;
+        base.TakeDamage(damage);
         if (healthPoints <= 0)
         {
             Die();
         }
     }
 
-    public void Heal(int heal) {
-        healthPoints = Mathf.Max(maxHealthPoints, healthPoints + heal);
-    }
 
     private void Die()
     {
