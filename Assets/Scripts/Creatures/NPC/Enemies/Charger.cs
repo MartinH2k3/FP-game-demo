@@ -79,8 +79,7 @@ public class Charger : Enemy
     }
 
 
-    private bool CanSeePlayer()
-    {
+    private bool CanSeePlayer() {
         var hit = Physics2D.Raycast(rayOrigin.position, rayDirection.normalized, visionRange, playerLayer | obstacleLayer);
 
         // Visual debug
@@ -94,8 +93,7 @@ public class Charger : Enemy
 
     private void Roam() {
         // Check if the enemy is within the roaming range
-        if (Vector2.Distance(transform.position, _roamingStartPosition) < roamingRange || _turningLocked)
-        {
+        if (Vector2.Distance(transform.position, _roamingStartPosition) < roamingRange || _turningLocked) {
             // Move in the current direction
             rb.linearVelocity = rayDirection * movementSpeed;
 
@@ -107,8 +105,7 @@ public class Charger : Enemy
                 _activeTurningTimer = turningTimer;
             }
         }
-        else
-        {
+        else {
             // Reverse direction when out of range
             _lookingLeft = !_lookingLeft;
             rayDirection = -rayDirection;

@@ -22,8 +22,8 @@ public class UIManager : MonoBehaviour
     }
 
     public void SetJumpAvailable(bool available) {
-        if (jumpAvailable != null) jumpAvailable.gameObject.SetActive(available);
-        if (jumpUnavailable != null) jumpUnavailable.gameObject.SetActive(!available);
+        jumpAvailable?.gameObject.SetActive(available);
+        jumpUnavailable?.gameObject.SetActive(!available);
     }
 }
 
