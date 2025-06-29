@@ -9,8 +9,14 @@ public class Character: MonoBehaviour {
 
     private float _movementTimeout; // Unable to move after knockback or something alike
 
-    private void Start() {
+    protected virtual void Start() {
         healthPoints = maxHealthPoints;
+    }
+
+    protected virtual void Update() {
+        if (_movementTimeout > 0f) {
+            _movementTimeout -= Time.deltaTime;
+        }
     }
 
     public void AddVelocity(Vector2 velocity) {
@@ -48,6 +54,10 @@ public class Character: MonoBehaviour {
 
     protected bool CanMove() {
         return _movementTimeout <= 0f;
+    }
+
+    public void SetMovementTimeout(float timeout) {
+        _movementTimeout = timeout;
     }
 }
 }

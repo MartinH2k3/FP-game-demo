@@ -30,7 +30,9 @@ public class Charger : Enemy
     [SerializeField] private float chargeDuration;
     public float _activeChargeDuration;
     private bool _lookingLeft = true;
-    private Vector2 _chargeDirection;
+    // Knockback
+    [SerializeField] private float knockbackDuration;
+    [SerializeField] private float knockbackStrength;
     // Vision
     [SerializeField] private float visionRange = 8f;
     [SerializeField] private LayerMask playerLayer;
@@ -39,13 +41,15 @@ public class Charger : Enemy
     [SerializeField] private Vector2 rayDirection;
 
 
-    private void Start() {
+    protected override void Start() {
+        base.Start();
         rayDirection = _lookingLeft ? Vector2.left : Vector2.right;
         _roamingStartPosition = transform.position;
         _activeWindUpTimer = windUpTimer;
     }
 
-    private void Update() {
+    protected override void Update() {
+        base.Update();
         switch (_currentState) {
             case EnemyState.Roaming:
                 if (CanSeePlayer()) {
@@ -60,7 +64,6 @@ public class Charger : Enemy
                 _activeWindUpTimer -= Time.deltaTime;
                 if (_activeWindUpTimer <= 0f) {
                     _currentState = EnemyState.Attacking;
-                    _chargeDirection = rayDirection;
                     _activeChargeDuration = chargeDuration;
                 }
                 break;
@@ -100,7 +103,7 @@ public class Charger : Enemy
         // Check if the enemy is within the roaming range
         if (Vector2.Distance(transform.position, _roamingStartPosition) < roamingRange || _turningLocked) {
             // Move in the current direction
-            rb.linearVelocity = rayDirection * movementSpeed;
+            SetVelocity(rayDirection.x * movementSpeed, rb.linearVelocity.y);
 
             if (!_turningLocked) return;
 
@@ -114,28 +117,55 @@ public class Charger : Enemy
             // Reverse direction when out of range
             _lookingLeft = !_lookingLeft;
             rayDirection = -rayDirection;
-            rb.linearVelocity = rayDirection * movementSpeed;
+            SetVelocity(rayDirection.x * movementSpeed, rb.linearVelocity.y);
             _turningLocked = true;
         }
     }
 
     private void Stop() {
-        rb.linearVelocity = Vector2.zero;
+        if (!CanMove()) return;
+        SetVelocity(Vector2.zero);
     }
 
 
     private void Attack() {
-        rb.linearVelocity = rayDirection * chargeSpeed;
+        SetVelocity(rayDirection.x * chargeSpeed, rb.linearVelocity.y);
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
-        // if collision player layer
-        Debug.Log("Collided with: " + collision.gameObject.name);
-        if ((1 << collision.gameObject.layer & playerLayer) != 0) {
-            var player = collision.gameObject.GetComponent<PlayerMain>();
-            player?.TakeDamage(chargeDamage);
-            _currentState = EnemyState.Roaming;
+        if (_currentState == EnemyState.Attacking) {
+            if (TouchingPlayer(collision)) {
+                HitPlayer(collision);
+            } else if (!TouchingWall(collision)) {
+                return;
+            }
+
+            SetVelocity(rayDirection.x * -knockbackStrength/2, knockbackStrength/2);
+            SetMovementTimeout(knockbackDuration);
         }
+    }
+
+    private void HitPlayer(Collision2D collision) {
+        var player = collision.gameObject.GetComponent<PlayerMain>();
+        player?.TakeDamage(chargeDamage);
+        _currentState = EnemyState.Roaming;
+        // knockback
+        player?.SetVelocity(rayDirection.x * knockbackStrength, knockbackStrength);
+        player?.SetMovementTimeout(knockbackDuration);
+    }
+
+
+    private bool TouchingPlayer(Collision2D collision) {
+        return (1 << collision.gameObject.layer & playerLayer) != 0;
+    }
+
+    private bool TouchingWall(Collision2D collision) {
+        if ((1 << collision.gameObject.layer & obstacleLayer) == 0) return false;
+
+        foreach (var contact in collision.contacts) {
+            if (Math.Abs(contact.normal.x) > 0.5f) return true;
+        }
+        return false;
     }
 }
 

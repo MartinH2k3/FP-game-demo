@@ -74,11 +74,13 @@ public class PlayerMain : Character
         _move.Disable();
     }
 
-    private void Start() {
+    protected override void Start() {
+        base.Start();
         _movementSpeed = baseMovementSpeed;
     }
 
-    private void Update() {
+    protected override void Update() {
+        base.Update();
         HandleMovement();
         SyncVisuals();
     }
