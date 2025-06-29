@@ -5,16 +5,27 @@ namespace Creatures.NPC.Enemies
 
 public class Charger : Enemy
 {
+    public enum EnemyState
+    {
+        Roaming,
+        Charging,
+        Attacking
+    }
+    public EnemyState _currentState = EnemyState.Roaming;
     // Roaming
-    [SerializeField] private float movementSpeed = 3f;
-    [SerializeField] private float roamingRange = 5f;
+    [SerializeField] private float movementSpeed;
+    [SerializeField] private float roamingRange;
     private Vector2 _roamingStartPosition;
+    [SerializeField] private float turningTimer;
+    public float _activeTurningTimer;
+    private bool _turningLocked = true;
+    // Charging for attack
+    [SerializeField] private float windUpTimer;
+    public float _activeWindUpTimer;
     // Attack
-    [SerializeField] private float chargeSpeed = 10f;
-    [SerializeField] private float chargeDuration = 1f;
-    [SerializeField] private float chargeTime;
-    private float _activeChargeTime;
-    private bool _isCharging;
+    [SerializeField] private float chargeSpeed;
+    [SerializeField] private float chargeDuration;
+    public float _activeChargeDuration;
     private bool _lookingLeft = true;
     private Vector2 _chargeDirection;
     // Vision
@@ -28,15 +39,43 @@ public class Charger : Enemy
     private void Start() {
         rayDirection = _lookingLeft ? Vector2.left : Vector2.right;
         _roamingStartPosition = transform.position;
+        _activeWindUpTimer = windUpTimer;
     }
 
     private void Update() {
-        if (CanSeePlayer()) {
-            Attack();
+        switch (_currentState) {
+            case EnemyState.Roaming:
+                if (CanSeePlayer()) {
+                    Stop();
+                    _currentState = EnemyState.Charging;
+                    _activeWindUpTimer = windUpTimer;
+                } else {
+                    Roam();
+                }
+                break;
+            case EnemyState.Charging:
+                _activeWindUpTimer -= Time.deltaTime;
+                if (_activeWindUpTimer <= 0f) {
+                    _currentState = EnemyState.Attacking;
+                    _chargeDirection = rayDirection;
+                    _activeChargeDuration = chargeDuration;
+                }
+                break;
+            case EnemyState.Attacking:
+                _activeChargeDuration -= Time.deltaTime;
+                Attack();
+                if (_activeChargeDuration <= 0f) {
+                    _currentState = EnemyState.Roaming;
+                    _activeTurningTimer = 0;
+                    rayDirection = _lookingLeft ? Vector2.left : Vector2.right;
+                }
+                break;
+            default:
+                Debug.LogError("Charger: Invalid state encountered in Update method.");
+                break;
+
         }
-        else {
-            Roam();
-        }
+
     }
 
 
@@ -53,13 +92,20 @@ public class Charger : Enemy
         return ((1 << hit.collider.gameObject.layer) & playerLayer) != 0;
     }
 
-    private bool Roam() {
+    private void Roam() {
         // Check if the enemy is within the roaming range
-        if (Vector2.Distance(transform.position, _roamingStartPosition) < roamingRange)
+        if (Vector2.Distance(transform.position, _roamingStartPosition) < roamingRange || _turningLocked)
         {
             // Move in the current direction
             rb.linearVelocity = rayDirection * movementSpeed;
-            return true;
+
+            if (!_turningLocked) return;
+
+            _activeTurningTimer -= Time.deltaTime;
+            if (_activeTurningTimer <= 0f) {
+                _turningLocked = false;
+                _activeTurningTimer = turningTimer;
+            }
         }
         else
         {
@@ -67,9 +113,14 @@ public class Charger : Enemy
             _lookingLeft = !_lookingLeft;
             rayDirection = -rayDirection;
             rb.linearVelocity = rayDirection * movementSpeed;
-            return false;
+            _turningLocked = true;
         }
     }
+
+    private void Stop() {
+        rb.linearVelocity = Vector2.zero;
+    }
+
 
     private void Attack() {
         rb.linearVelocity = rayDirection * chargeSpeed;
