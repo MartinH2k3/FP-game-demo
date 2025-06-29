@@ -95,6 +95,8 @@ public class Charger : Enemy
     }
 
     private void Roam() {
+        if (!CanMove()) return;
+
         // Check if the enemy is within the roaming range
         if (Vector2.Distance(transform.position, _roamingStartPosition) < roamingRange || _turningLocked) {
             // Move in the current direction

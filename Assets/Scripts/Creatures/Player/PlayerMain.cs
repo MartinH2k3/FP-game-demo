@@ -93,6 +93,11 @@ public class PlayerMain : Character
     }
 
     private void HandleMovement() {
+        if (!CanMove()) {
+            // can't change velocity if movement is locked
+            return;
+        }
+
         if (_canClimb) {
             rb.gravityScale = 0;
             SetVelocity(_moveInput.x * _movementSpeed, _moveInput.y * _movementSpeed);
@@ -140,7 +145,8 @@ public class PlayerMain : Character
     private bool CanJump() {
         return (CanWallJump() || _onGround || (GameManager.Instance.SkillData.IsUnlocked(Skill.DoubleJump) && !_doubleJumped))
                && _activeJumpCooldown == 0
-               && !_isDashing;
+               && !_isDashing
+               && CanMove();
     }
 
     private bool CanWallJump() {
@@ -162,7 +168,7 @@ public class PlayerMain : Character
     }
 
     private bool CanDash() {
-        return _activeDashCooldown <= 0 && (_onGround || !_dashedInAir);
+        return _activeDashCooldown <= 0 && (_onGround || !_dashedInAir) && CanMove();
     }
 
     private void Move(InputAction.CallbackContext context) {

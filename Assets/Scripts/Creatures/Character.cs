@@ -5,8 +5,9 @@ namespace Creatures
 public class Character: MonoBehaviour {
     [SerializeField] protected int maxHealthPoints = 100;
     [SerializeField] protected int healthPoints;
-
     [SerializeField] protected Rigidbody2D rb;
+
+    private float _movementTimeout; // Unable to move after knockback or something alike
 
     private void Start() {
         healthPoints = maxHealthPoints;
@@ -36,12 +37,17 @@ public class Character: MonoBehaviour {
         }
     }
 
+
     public virtual void TakeDamage(int damage) {
         healthPoints -= damage;
     }
 
     public virtual void Heal(int health) {
         healthPoints += health;
+    }
+
+    protected bool CanMove() {
+        return _movementTimeout <= 0f;
     }
 }
 }
