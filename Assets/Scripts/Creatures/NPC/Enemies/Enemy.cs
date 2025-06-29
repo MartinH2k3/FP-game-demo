@@ -2,17 +2,8 @@
 
 namespace Creatures.NPC.Enemies
 {
-public abstract class Enemy: MonoBehaviour
+public abstract class Enemy: Creature
 {
-
-    [SerializeField] protected int maxHealthPoints = 100;
-    [SerializeField] protected int healthPoints;
-
-    [SerializeField] protected Rigidbody2D rb;
-
-    private void Start() {
-        healthPoints = maxHealthPoints;
-    }
 
     public void TakeDamage(int damage)
     {

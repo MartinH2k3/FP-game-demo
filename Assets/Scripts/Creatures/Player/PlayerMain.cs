@@ -7,10 +7,8 @@ using UnityEngine.InputSystem;
 namespace Creatures.Player
 {
 
-public class PlayerMain : MonoBehaviour
+public class PlayerMain : Creature
 {
-    // controls
-    public Rigidbody2D rb;
     // movement
     public float baseMovementSpeed = 3;
     private float _movementSpeed;
@@ -32,13 +30,11 @@ public class PlayerMain : MonoBehaviour
     private float _activeDashDuration;
     private bool _dashedInAir; // in air, only one dash possible
         // dash implementation
-    private Vector2 _dashVelocity;
     private bool _isDashing;
     // climbing
     private bool _canClimb;
     // stats
     public BaseStats baseStats;
-    public int healthPoints = 100;
     // input
     private InputSystemActions _inputActions;
     private InputAction _jump;
@@ -99,7 +95,7 @@ public class PlayerMain : MonoBehaviour
     private void HandleMovement() {
         if (_canClimb) {
             rb.gravityScale = 0;
-            rb.linearVelocity = new Vector2(_moveInput.x * _movementSpeed, _moveInput.y * _movementSpeed);
+            SetVelocity(_moveInput.x * _movementSpeed, _moveInput.y * _movementSpeed);
         } else if (_isDashing) {
             _activeDashDuration = Math.Max(_activeDashDuration - Time.deltaTime, 0);
             if (_activeDashDuration <= 0) {
@@ -110,7 +106,7 @@ public class PlayerMain : MonoBehaviour
         else {
             rb.gravityScale = 1;
             // using Math instead of Mathf, because in Update() method, Mathf.Sign(0) returns 1 (some sort of bug)
-            rb.linearVelocity = new Vector2(Math.Sign(_moveInput.x) * _movementSpeed, rb.linearVelocity.y);
+            SetVelocity(Math.Sign(_moveInput.x) * _movementSpeed, rb.linearVelocity.y);
         }
         _activeJumpCooldown = Math.Max(_activeJumpCooldown - Time.deltaTime, 0);
         _activeDashCooldown = Math.Max(_activeDashCooldown - Time.deltaTime, 0);
@@ -123,7 +119,7 @@ public class PlayerMain : MonoBehaviour
     private void Jump(InputAction.CallbackContext context) {
         if (!CanJump()) return;
 
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpStrength);
+        SetVelocity(rb.linearVelocity.x, jumpStrength);
         _activeJumpCooldown = jumpCooldown;
 
         if (_onGround) {
@@ -161,8 +157,7 @@ public class PlayerMain : MonoBehaviour
             _activeDashCooldown = dashCooldown;
             _activeDashDuration = dashDuration;
 
-            _dashVelocity = new Vector2(_isFacingRight ? dashStrength : -dashStrength, 0);
-            rb.linearVelocity = _dashVelocity;
+            SetVelocity(_isFacingRight ? dashStrength : -dashStrength, 0);
         }
     }
 
