@@ -1,3 +1,5 @@
+using System;
+using Creatures.Player;
 using UnityEngine;
 
 namespace Creatures.NPC.Enemies
@@ -23,6 +25,7 @@ public class Charger : Enemy
     [SerializeField] private float windUpTimer;
     public float _activeWindUpTimer;
     // Attack
+    [SerializeField] private int chargeDamage;
     [SerializeField] private float chargeSpeed;
     [SerializeField] private float chargeDuration;
     public float _activeChargeDuration;
@@ -121,6 +124,16 @@ public class Charger : Enemy
 
     private void Attack() {
         rb.linearVelocity = rayDirection * chargeSpeed;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        // if collision player layer
+        Debug.Log("Collided with: " + collision.gameObject.name);
+        if ((1 << collision.gameObject.layer & playerLayer) != 0) {
+            var player = collision.gameObject.GetComponent<PlayerMain>();
+            player?.TakeDamage(chargeDamage);
+            _currentState = EnemyState.Roaming;
+        }
     }
 }
 
