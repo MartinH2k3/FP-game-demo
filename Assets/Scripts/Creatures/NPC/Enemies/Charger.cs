@@ -1,6 +1,7 @@
 using System;
 using Creatures.Player;
 using UnityEngine;
+using Vector2 = UnityEngine.Vector2;
 
 namespace Creatures.NPC.Enemies
 {
@@ -25,6 +26,7 @@ public class Charger : Enemy
     [SerializeField] private float windUpTimer;
     public float _activeWindUpTimer;
     // Attack
+    [SerializeField] private int contactDamage;
     [SerializeField] private int chargeDamage;
     [SerializeField] private float chargeSpeed;
     [SerializeField] private float chargeDuration;
@@ -61,6 +63,7 @@ public class Charger : Enemy
                 }
                 break;
             case EnemyState.Charging:
+                Stop();
                 _activeWindUpTimer -= Time.deltaTime;
                 if (_activeWindUpTimer <= 0f) {
                     _currentState = EnemyState.Attacking;
@@ -124,7 +127,7 @@ public class Charger : Enemy
 
     private void Stop() {
         if (!CanMove()) return;
-        SetVelocity(Vector2.zero);
+        SetVelocity(0, rb.linearVelocity.y);
     }
 
 
@@ -133,27 +136,48 @@ public class Charger : Enemy
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
-        if (_currentState == EnemyState.Attacking) {
-            if (TouchingPlayer(collision)) {
-                HitPlayer(collision);
-            } else if (!TouchingWall(collision)) {
-                return;
-            }
+        var touchingPlayer = TouchingPlayer(collision);
+        var touchingWall = TouchingWall(collision);
+        var isAttacking = _currentState == EnemyState.Attacking;
 
-            SetVelocity(rayDirection.x * -knockbackStrength/2, knockbackStrength/2);
-            SetMovementTimeout(knockbackDuration);
+        if (touchingPlayer) {
+            HitPlayer(collision, isAttacking);
         }
+
+        if (isAttacking && (touchingWall || touchingPlayer)) {
+            BounceBack();
+        }
+
+
     }
 
-    private void HitPlayer(Collision2D collision) {
+    private void BounceBack() {
+        SetVelocity(rayDirection.x * -knockbackStrength/2, knockbackStrength/2);
+        SetMovementTimeout(knockbackDuration);
+    }
+
+    private void HitPlayer(Collision2D collision, bool isCharge = true) {
         var player = collision.gameObject.GetComponent<PlayerMain>();
-        player?.TakeDamage(chargeDamage);
-        _currentState = EnemyState.Roaming;
-        // knockback
-        player?.SetVelocity(rayDirection.x * knockbackStrength, knockbackStrength);
+        if (isCharge) {
+            player?.TakeDamage(chargeDamage);
+            _currentState = EnemyState.Roaming;
+        }
+        else {
+            player?.TakeDamage(contactDamage);
+        }
+        KnockBackPlayer(collision, player, isCharge);
+
+    }
+
+    private void KnockBackPlayer(Collision2D collision, PlayerMain player, bool isCharge = true) {
+        // get which direction the player collided on
+        var contact = collision.contacts[0];
+        var knockbackDirection = contact.normal.x > 0 ? -1 : 1;
+        player?.SetVelocity(isCharge ?
+                            new Vector2(knockbackDirection * knockbackStrength, knockbackStrength) :
+                            new Vector2(knockbackDirection * knockbackStrength/2, knockbackStrength/2));
         player?.SetMovementTimeout(knockbackDuration);
     }
-
 
     private bool TouchingPlayer(Collision2D collision) {
         return (1 << collision.gameObject.layer & playerLayer) != 0;

@@ -1093,6 +1093,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aafaa1ad7ba822c4eb444be692692c07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealthPoints: 100
+  healthPoints: 100
   rb: {fileID: 1701016024}
   baseMovementSpeed: 3
   jumpStrength: 5
@@ -1110,7 +1112,6 @@ MonoBehaviour:
     durability: 0
     fireResistance: 0
     magicResistance: 0
-  healthPoints: 100
   animator: {fileID: 1701016030}
   uiManager: {fileID: 1671441726}
 --- !u!114 &1701016029
@@ -1467,10 +1468,13 @@ MonoBehaviour:
   _activeTurningTimer: 0
   windUpTimer: 1
   _activeWindUpTimer: 0
+  chargeDamage: 15
   chargeSpeed: 20
   chargeDuration: 1
   _activeChargeDuration: 0
-  visionRange: 10
+  knockbackDuration: 0.3
+  knockbackStrength: 5
+  visionRange: 5
   playerLayer:
     serializedVersion: 2
     m_Bits: 128
