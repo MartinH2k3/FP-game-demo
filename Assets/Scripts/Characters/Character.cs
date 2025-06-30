@@ -2,12 +2,14 @@
 
 namespace Characters
 {
-public class Character: MonoBehaviour {
+public abstract class Character: MonoBehaviour {
     [SerializeField] protected int maxHealthPoints = 100;
     [SerializeField] protected int healthPoints;
     [SerializeField] protected Rigidbody2D rb;
 
     private float _movementTimeout; // Unable to move after knockback or something alike
+    private bool _isVulnerable = true;
+    private bool _canBeMovedByOutsideForces = true;
 
     protected virtual void Start() {
         healthPoints = maxHealthPoints;
@@ -45,7 +47,7 @@ public class Character: MonoBehaviour {
 
 
     public virtual void TakeDamage(int damage) {
-        healthPoints -= damage;
+        if (_isVulnerable) healthPoints -= damage;
     }
 
     public virtual void Heal(int health) {
@@ -56,8 +58,20 @@ public class Character: MonoBehaviour {
         return _movementTimeout <= 0f;
     }
 
+    public bool CanBeMovedByOutsideForces() {
+        return _canBeMovedByOutsideForces;
+    }
+
+    public void SetCanBeMovedByOutsideForces(bool canBeMoved) {
+        _canBeMovedByOutsideForces = canBeMoved;
+    }
+
     public void SetMovementTimeout(float timeout) {
         _movementTimeout = timeout;
+    }
+
+    private void SetVulnerability(bool isVulnerable) {
+        _isVulnerable = isVulnerable;
     }
 }
 }
