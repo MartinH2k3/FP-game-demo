@@ -175,11 +175,6 @@ public class Charger : Enemy
 
     }
 
-    private void BounceBack() {
-        SetVelocity(walkingDirection.x * -knockbackStrength/2, knockbackStrength/2);
-        SetMovementTimeout(knockbackDuration);
-    }
-
     private void HitPlayer(Collision2D collision, bool isCharge = true) {
         var player = collision.gameObject.GetComponent<PlayerMain>();
         if (isCharge) {
@@ -196,16 +191,6 @@ public class Charger : Enemy
             contact.normal.x > 0 ? -1 : 1,
             knockbackDuration);
 
-    }
-
-    private void KnockBackPlayer(Collision2D collision, PlayerMain player, bool isCharge = true) {
-        // get which direction the player collided on
-        var contact = collision.contacts[0];
-        var knockbackDirection = contact.normal.x > 0 ? -1 : 1;
-        player?.SetVelocity(isCharge ?
-                            new Vector2(knockbackDirection * knockbackStrength, knockbackStrength) :
-                            new Vector2(knockbackDirection * knockbackStrength/2, knockbackStrength/2));
-        player?.SetMovementTimeout(knockbackDuration);
     }
 
     private bool TouchingPlayer(Collision2D collision) {
