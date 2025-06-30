@@ -1,5 +1,8 @@
 using System;
+using Characters.NPC.Enemies;
 using Managers;
+using Physics;
+using Helpers;
 using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,6 +12,11 @@ namespace Characters.Player
 
 public class PlayerMain : Character
 {
+    private enum AttackType {
+        Punch,
+        Spell,
+        Weapon,
+    }
     // movement
     public float baseMovementSpeed = 3;
     private float _movementSpeed;
@@ -33,8 +41,18 @@ public class PlayerMain : Character
     private bool _isDashing;
     // climbing
     private bool _canClimb;
+    // attack
+    [SerializeField] private float attackRange;
+    private float _attackCooldown;
+    private AttackType _activeAttackType;
     // stats
     public BaseStats baseStats;
+    // game object references
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private LayerMask obstacleLayerMask ;
+    [SerializeField] private LayerMask enemyLayerMask;
+    [SerializeField] private LayerMask climbableLayerMask;
+
     // input
     private InputSystemActions _inputActions;
     private InputAction _jump;
@@ -42,6 +60,7 @@ public class PlayerMain : Character
     private Vector2 _moveInput;
     private InputAction _sprint;
     private InputAction _dash;
+    private InputAction _attack;
     // visual && animations
     private bool _isFacingRight = true; // used for flipping the sprite
     [SerializeField] private Animator animator;
@@ -67,6 +86,9 @@ public class PlayerMain : Character
         _dash = _inputActions.Player.Dash;
         _dash.Enable();
         _dash.performed += Dash;
+        _attack = _inputActions.Player.Attack;
+        _attack.Enable();
+        _attack.performed += Attack;
     }
 
     private void OnDisable() {
@@ -83,6 +105,7 @@ public class PlayerMain : Character
         base.Update();
         HandleMovement();
         SyncVisuals();
+        ManageCooldowns();
     }
 
     private void SyncVisuals() {
@@ -94,10 +117,15 @@ public class PlayerMain : Character
         uiManager.SetJumpAvailable(CanJump());
     }
 
+    private void ManageCooldowns() {
+        _activeJumpCooldown = Math.Max(_activeJumpCooldown - Time.deltaTime, 0);
+        _activeDashCooldown = Math.Max(_activeDashCooldown - Time.deltaTime, 0);
+        _attackCooldown = Math.Max(_attackCooldown - Time.deltaTime, 0);
+    }
+
     private void HandleMovement() {
         if (!CanMove()) {
-            // can't change velocity if movement is locked
-            return;
+            return; // can't change velocity if movement is locked
         }
 
         if (_canClimb) {
@@ -115,12 +143,50 @@ public class PlayerMain : Character
             // using Math instead of Mathf, because in Update() method, Mathf.Sign(0) returns 1 (some sort of bug)
             SetVelocity(Math.Sign(_moveInput.x) * _movementSpeed, rb.linearVelocity.y);
         }
-        _activeJumpCooldown = Math.Max(_activeJumpCooldown - Time.deltaTime, 0);
-        _activeDashCooldown = Math.Max(_activeDashCooldown - Time.deltaTime, 0);
     }
 
-    public void Attack() {
+    public void Attack(InputAction.CallbackContext context) {
+        if (_attackCooldown > 0) return;
+        _attackCooldown = baseStats.attackSpeed;
 
+        Debug.Log("attack");
+        var targets = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayerMask);
+
+        // attack point on left but facing right
+        if (attackPoint.position.x < transform.position.x && _isFacingRight) {
+            var diff = transform.position.x - attackPoint.position.x;
+            attackPoint.position = new Vector2(transform.position.x + diff, transform.position.y);
+        }
+        // attack point on right but facing left
+        else if (attackPoint.position.x > transform.position.x && !_isFacingRight) {
+            var diff = attackPoint.position.x - transform.position.x;
+            attackPoint.position = new Vector2(transform.position.x - diff, transform.position.y);
+        }
+
+        int damage = 0;
+        float knockback = 0;
+        switch (_activeAttackType) {
+            case AttackType.Punch:
+                // TODO add melee weapon add-ons
+                damage = baseStats.strength + baseStats.attackDamage * baseStats.attackDamageModifier;
+                knockback = 3;
+                break;
+            case AttackType.Spell:
+                // TODO implement
+                break;
+            case AttackType.Weapon:
+                // TODO implement
+                break;
+            default:
+                damage = 1;
+                break;
+        }
+        foreach (var target in targets) {
+            Debug.Log("Attacked " + target.name);
+            var enemy = target.gameObject.GetComponent<Enemy>();
+            enemy.TakeDamage(damage);
+            CrowdControl.Knockback(enemy, knockback, knockback, _isFacingRight ? 1 : -1);
+        }
     }
 
     private void Jump(InputAction.CallbackContext context) {
@@ -207,29 +273,21 @@ public class PlayerMain : Character
         CancelTriggers();
     }
 
-    // silly little function name
     private void EvaluateCollision(Collision2D collision) {
-        var layerName = LayerMask.LayerToName(collision.gameObject.layer);
-        switch (layerName)
-        {
-            case "Wall":
-                foreach (var contact in collision.contacts)
-                {
-                    if (contact.normal.y > 0.5f)
-                    {
-                        _onGround = true;
-                        ResetJump();
-                    }
-
-                    // still using Math.Abs if we want to add more functionality for wall touch later
-                    if (Math.Abs(contact.normal.x) > 0.5f)
-                    {
-                        if (contact.normal.x > 0) _touchingRightWall = true;
-                        else if (contact.normal.x < 0) _touchingLeftWall = true;
-
-                    }
+        if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, obstacleLayerMask)) {
+            foreach (var contact in collision.contacts) {
+                if (contact.normal.y > 0.5f) {
+                    _onGround = true;
+                    ResetJump();
                 }
-                break;
+
+                // still using Math.Abs if we want to add more functionality for wall touch later
+                if (Math.Abs(contact.normal.x) > 0.5f) {
+                    if (contact.normal.x > 0) _touchingRightWall = true;
+                    else if (contact.normal.x < 0) _touchingLeftWall = true;
+
+                }
+            }
         }
     }
 
@@ -240,13 +298,8 @@ public class PlayerMain : Character
     }
 
     private void EvaluateTrigger(Collider2D collision) {
-        var layerName = LayerMask.LayerToName(collision.gameObject.layer);
-        switch (layerName)
-        {
-            case "Climbable":
-                _canClimb = true;
-                break;
-        }
+        if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, climbableLayerMask))
+            _canClimb = true;
     }
 
     private void CancelTriggers() {
@@ -273,5 +326,9 @@ public class PlayerMain : Character
         uiManager.SetHealth(healthPoints, baseStats.healthPoints);
     }
 
+    // Debug
+    private void OnDrawGizmos() {
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
 }
 }

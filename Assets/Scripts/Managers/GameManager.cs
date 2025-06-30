@@ -1,5 +1,5 @@
 using System.IO;
-using Creatures.Player;
+using Characters.Player;
 using Helpers;
 using UnityEngine;
 
