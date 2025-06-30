@@ -1465,13 +1465,12 @@ MonoBehaviour:
   movementSpeed: 3
   roamingRange: 5
   turningTimer: 0.5
-  _activeTurningTimer: 0
+  groundCheckDistance: 0
   windUpTimer: 1
-  _activeWindUpTimer: 0
+  contactDamage: 5
   chargeDamage: 15
   chargeSpeed: 20
   chargeDuration: 1
-  _activeChargeDuration: 0
   knockbackDuration: 0.3
   knockbackStrength: 5
   visionRange: 5
@@ -1482,7 +1481,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   rayOrigin: {fileID: 1941686928}
-  rayDirection: {x: 1, y: 0}
+  walkingDirection: {x: 0, y: 0}
 --- !u!50 &1941686925
 Rigidbody2D:
   serializedVersion: 5

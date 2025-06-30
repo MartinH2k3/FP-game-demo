@@ -8,30 +8,30 @@ namespace Creatures.NPC.Enemies
 
 public class Charger : Enemy
 {
-    public enum EnemyState
+    private enum EnemyState
     {
         Roaming,
         Charging,
         Attacking
     }
-    public EnemyState _currentState = EnemyState.Roaming;
+    private EnemyState _currentState = EnemyState.Roaming;
     // Roaming
     [SerializeField] private float movementSpeed;
     [SerializeField] private float roamingRange;
     private Vector2 _roamingStartPosition;
     [SerializeField] private float turningTimer;
-    public float _activeTurningTimer;
+    private float _activeTurningTimer;
     private bool _turningLocked = true;
+    [SerializeField] private float groundCheckDistance;
     // Charging for attack
     [SerializeField] private float windUpTimer;
-    public float _activeWindUpTimer;
+    private float _activeWindUpTimer;
     // Attack
     [SerializeField] private int contactDamage;
     [SerializeField] private int chargeDamage;
     [SerializeField] private float chargeSpeed;
     [SerializeField] private float chargeDuration;
-    public float _activeChargeDuration;
-    private bool _lookingLeft = true;
+    private float _activeChargeDuration;
     // Knockback
     [SerializeField] private float knockbackDuration;
     [SerializeField] private float knockbackStrength;
@@ -40,12 +40,12 @@ public class Charger : Enemy
     [SerializeField] private LayerMask playerLayer;
     [SerializeField] private LayerMask obstacleLayer;
     [SerializeField] private Transform rayOrigin;
-    [SerializeField] private Vector2 rayDirection;
+    [SerializeField] private Vector2 walkingDirection;
 
 
     protected override void Start() {
         base.Start();
-        rayDirection = _lookingLeft ? Vector2.left : Vector2.right;
+        walkingDirection = Vector2.left;
         _roamingStartPosition = transform.position;
         _activeWindUpTimer = windUpTimer;
     }
@@ -76,7 +76,6 @@ public class Charger : Enemy
                 if (_activeChargeDuration <= 0f) {
                     _currentState = EnemyState.Roaming;
                     _activeTurningTimer = 0;
-                    rayDirection = _lookingLeft ? Vector2.left : Vector2.right;
                 }
                 break;
             default:
@@ -89,10 +88,8 @@ public class Charger : Enemy
 
 
     private bool CanSeePlayer() {
-        var hit = Physics2D.Raycast(rayOrigin.position, rayDirection.normalized, visionRange, playerLayer | obstacleLayer);
-
-        // Visual debug
-        Debug.DrawRay(rayOrigin.position, rayDirection.normalized * visionRange, Color.red);
+        var hit = Physics2D.Raycast(rayOrigin.position, walkingDirection.normalized, visionRange, playerLayer | obstacleLayer);
+        // Debug.DrawRay(rayOrigin.position, walkingDirection.normalized * visionRange, Color.red);
 
         if (hit.collider is null) return false;
 
@@ -103,10 +100,13 @@ public class Charger : Enemy
     private void Roam() {
         if (!CanMove()) return;
 
+        DetectFallAndResetRoamingStart();
+
         // Check if the enemy is within the roaming range
-        if (Vector2.Distance(transform.position, _roamingStartPosition) < roamingRange || _turningLocked) {
+        if ((Vector2.Distance(transform.position, _roamingStartPosition) < roamingRange || _turningLocked)
+            && CanWalkForward()) {
             // Move in the current direction
-            SetVelocity(rayDirection.x * movementSpeed, rb.linearVelocity.y);
+            SetVelocity(walkingDirection.x * movementSpeed, rb.linearVelocity.y);
 
             if (!_turningLocked) return;
 
@@ -117,13 +117,32 @@ public class Charger : Enemy
             }
         }
         else {
-            // Reverse direction when out of range
-            _lookingLeft = !_lookingLeft;
-            rayDirection = -rayDirection;
-            SetVelocity(rayDirection.x * movementSpeed, rb.linearVelocity.y);
-            _turningLocked = true;
+            TurnAround();
+            SetVelocity(walkingDirection.x * movementSpeed, rb.linearVelocity.y);
         }
     }
+
+    private void TurnAround() {
+        walkingDirection = -walkingDirection;
+        _turningLocked = true;
+    }
+
+    private bool CanWalkForward() {
+        // Position slightly ahead of current position
+        Vector2 origin = (Vector2)transform.position + new Vector2(groundCheckDistance * walkingDirection.x, 0f);
+
+        // Raycast down to check for ground
+        RaycastHit2D groundHit = Physics2D.Raycast(origin, Vector2.down, groundCheckDistance, obstacleLayer);
+        // Debug.DrawRay(origin, Vector2.down * groundCheckDistance, groundHit.collider ? Color.green : Color.red);
+        // Raycast forward to check for wall
+        RaycastHit2D wallHit = Physics2D.Raycast(transform.position, walkingDirection.normalized, groundCheckDistance, obstacleLayer);
+        // Debug.DrawRay(transform.position, walkingDirection.normalized * groundCheckDistance, wallHit.collider ? Color.red : Color.green);
+
+
+        // We can walk forward only if there's ground ahead and no wall
+        return groundHit.collider is not null && wallHit.collider is null;
+    }
+
 
     private void Stop() {
         if (!CanMove()) return;
@@ -132,7 +151,7 @@ public class Charger : Enemy
 
 
     private void Attack() {
-        SetVelocity(rayDirection.x * chargeSpeed, rb.linearVelocity.y);
+        SetVelocity(walkingDirection.x * chargeSpeed, rb.linearVelocity.y);
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
@@ -152,7 +171,7 @@ public class Charger : Enemy
     }
 
     private void BounceBack() {
-        SetVelocity(rayDirection.x * -knockbackStrength/2, knockbackStrength/2);
+        SetVelocity(walkingDirection.x * -knockbackStrength/2, knockbackStrength/2);
         SetMovementTimeout(knockbackDuration);
     }
 
@@ -190,6 +209,11 @@ public class Charger : Enemy
             if (Math.Abs(contact.normal.x) > 0.5f) return true;
         }
         return false;
+    }
+
+    private void DetectFallAndResetRoamingStart() {
+        if (Math.Abs(transform.position.y - _roamingStartPosition.y) <= 0.001f) return;
+        _roamingStartPosition = transform.position;
     }
 }
 
