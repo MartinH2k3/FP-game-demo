@@ -1,5 +1,6 @@
 using System;
 using Characters.Player;
+using Physics;
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 
@@ -164,7 +165,11 @@ public class Charger : Enemy
         }
 
         if (isAttacking && (touchingWall || touchingPlayer)) {
-            BounceBack();
+            CrowdControl.Knockback(this,
+                knockbackStrength/2,
+                knockbackStrength/2,
+                (int)-walkingDirection.x,
+                knockbackDuration);
         }
 
 
@@ -184,7 +189,12 @@ public class Charger : Enemy
         else {
             player?.TakeDamage(contactDamage);
         }
-        KnockBackPlayer(collision, player, isCharge);
+        var contact = collision.contacts[0];
+        CrowdControl.Knockback(player,
+            isCharge ? knockbackStrength : knockbackStrength / 2,
+            isCharge ? knockbackStrength : knockbackStrength / 2,
+            contact.normal.x > 0 ? -1 : 1,
+            knockbackDuration);
 
     }
 
