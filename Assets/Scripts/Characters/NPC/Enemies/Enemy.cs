@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Creatures.NPC.Enemies
+namespace Characters.NPC.Enemies
 {
 public abstract class Enemy: Character {
     public override void TakeDamage(int damage) {

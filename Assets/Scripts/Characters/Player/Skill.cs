@@ -1,4 +1,4 @@
-﻿namespace Creatures.Player
+﻿namespace Characters.Player
 {
     public enum Skill {
         DoubleJump,

@@ -1,9 +1,9 @@
 using System;
-using Creatures.Player;
+using Characters.Player;
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 
-namespace Creatures.NPC.Enemies
+namespace Characters.NPC.Enemies
 {
 
 public class Charger : Enemy

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Creatures
+namespace Characters
 {
 public class Character: MonoBehaviour {
     [SerializeField] protected int maxHealthPoints = 100;

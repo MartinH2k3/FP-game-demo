@@ -4,7 +4,7 @@ using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Creatures.Player
+namespace Characters.Player
 {
 
 public class PlayerMain : Character

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Creatures.Player
+namespace Characters.Player
 {
 [Serializable]
 public class BaseStats
