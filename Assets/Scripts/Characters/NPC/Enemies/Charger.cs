@@ -9,13 +9,13 @@ namespace Characters.NPC.Enemies
 
 public class Charger : Enemy
 {
-    private enum EnemyState
+    private enum State
     {
         Roaming,
         Charging,
         Attacking
     }
-    private EnemyState _currentState = EnemyState.Roaming;
+    private State _currentState = State.Roaming;
     // Roaming
     [SerializeField] private float movementSpeed;
     [SerializeField] private float roamingRange;
@@ -54,28 +54,28 @@ public class Charger : Enemy
     protected override void Update() {
         base.Update();
         switch (_currentState) {
-            case EnemyState.Roaming:
+            case State.Roaming:
                 if (CanSeePlayer()) {
                     Stop();
-                    _currentState = EnemyState.Charging;
+                    _currentState = State.Charging;
                     _activeWindUpTimer = windUpTimer;
                 } else {
                     Roam();
                 }
                 break;
-            case EnemyState.Charging:
+            case State.Charging:
                 Stop();
                 _activeWindUpTimer -= Time.deltaTime;
                 if (_activeWindUpTimer <= 0f) {
-                    _currentState = EnemyState.Attacking;
+                    _currentState = State.Attacking;
                     _activeChargeDuration = chargeDuration;
                 }
                 break;
-            case EnemyState.Attacking:
+            case State.Attacking:
                 _activeChargeDuration -= Time.deltaTime;
                 Attack();
                 if (_activeChargeDuration <= 0f) {
-                    _currentState = EnemyState.Roaming;
+                    _currentState = State.Roaming;
                     _activeTurningTimer = 0;
                 }
                 break;
@@ -158,7 +158,7 @@ public class Charger : Enemy
     private void OnCollisionEnter2D(Collision2D collision) {
         var touchingPlayer = TouchingPlayer(collision);
         var touchingWall = TouchingWall(collision);
-        var isAttacking = _currentState == EnemyState.Attacking;
+        var isAttacking = _currentState == State.Attacking;
 
         if (touchingPlayer) {
             HitPlayer(collision, isAttacking);
@@ -179,7 +179,7 @@ public class Charger : Enemy
         var player = collision.gameObject.GetComponent<PlayerMain>();
         if (isCharge) {
             player?.TakeDamage(chargeDamage);
-            _currentState = EnemyState.Roaming;
+            _currentState = State.Roaming;
         }
         else {
             player?.TakeDamage(contactDamage);

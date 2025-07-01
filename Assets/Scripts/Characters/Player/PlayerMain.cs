@@ -182,7 +182,6 @@ public class PlayerMain : Character
                 break;
         }
         foreach (var target in targets) {
-            Debug.Log("Attacked " + target.name);
             var enemy = target.gameObject.GetComponent<Enemy>();
             enemy.TakeDamage(damage);
             CrowdControl.Knockback(enemy, knockback, knockback, _isFacingRight ? 1 : -1);
