@@ -55,6 +55,10 @@ public class SneakyBomb : Enemy
         }
     }
 
+    private void SyncVisuals() {
+
+    }
+
     private void Wait() {
         _activeDetectionCooldown -= Time.deltaTime;
 
