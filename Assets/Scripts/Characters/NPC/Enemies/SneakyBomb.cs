@@ -32,6 +32,7 @@ public class SneakyBomb : Enemy
     [SerializeField] private float knockbackStrength = 10f;
 
     [CanBeNull] private PlayerMain _player = null;
+    [SerializeField] private Animator animator;
 
     protected override void Start() {
         base.Start();
@@ -69,6 +70,7 @@ public class SneakyBomb : Enemy
         if (IsPlayerDetected()) {
             _currentState = State.DiggingUp;
             _activeDiggingUpDuration = diggingUpDuration;
+            animator.SetTrigger("DiggingUp");
         }
     }
 
