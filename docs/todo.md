@@ -18,7 +18,7 @@
 # Week 2: 30.6.
 - [ ] Enemy
   - [ ] Basic Enemy Code (Beans for now)
-    - [ ] Walk toward player, explode on contact
+    - [x] Walk toward player, explode on contact
     - [ ] Archer, stationary, shoots arrows at player
     - [ ] Mage, stationary, shoots fireballs at player
     - [ ] Swordsman, walks toward player, attacks with sword
@@ -31,6 +31,7 @@
   - [ ] Inventory UI
   - [ ] Item management (add/remove items)
   - [ ] Item types (weapons, potions, etc.)
+- Finish Week 2
 
 
 # Unassigned
