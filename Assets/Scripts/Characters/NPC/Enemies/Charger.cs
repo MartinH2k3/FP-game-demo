@@ -3,6 +3,7 @@ using Characters.Player;
 using Physics;
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
+using Helpers;
 
 namespace Characters.NPC.Enemies
 {
@@ -194,11 +195,11 @@ public class Charger : Enemy
     }
 
     private bool TouchingPlayer(Collision2D collision) {
-        return (1 << collision.gameObject.layer & playerLayer) != 0;
+        return HelperMethods.LayerInLayerMask(collision.gameObject.layer, playerLayer);
     }
 
     private bool TouchingWall(Collision2D collision) {
-        if ((1 << collision.gameObject.layer & obstacleLayer) == 0) return false;
+        if (!HelperMethods.LayerInLayerMask(collision.gameObject.layer, obstacleLayer)) return false;
 
         foreach (var contact in collision.contacts) {
             if (Math.Abs(contact.normal.x) > 0.5f) return true;
