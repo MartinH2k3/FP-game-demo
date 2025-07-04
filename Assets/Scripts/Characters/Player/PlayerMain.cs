@@ -50,7 +50,7 @@ public class PlayerMain : Character
     // game object references
     [SerializeField] private Transform attackPoint;
     [SerializeField] private LayerMask obstacleLayerMask ;
-    [SerializeField] private LayerMask enemyLayerMask;
+    [SerializeField] private LayerMask hittableLayerMask;
     [SerializeField] private LayerMask climbableLayerMask;
 
     // input
@@ -150,7 +150,7 @@ public class PlayerMain : Character
         _attackCooldown = baseStats.attackSpeed;
 
         Debug.Log("attack");
-        var targets = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayerMask);
+        var targets = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, hittableLayerMask);
 
         // attack point on left but facing right
         if (attackPoint.position.x < transform.position.x && _isFacingRight) {
