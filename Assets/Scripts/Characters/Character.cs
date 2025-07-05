@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using UnityEngine;
+using GameMechanics.StatusEffects;
 
 namespace Characters
 {
@@ -11,6 +15,21 @@ public abstract class Character: MonoBehaviour {
     private bool _isVulnerable = true;
     private bool _canBeMovedByOutsideForces = true;
 
+    private class ActiveEffect {
+        public Effect Effect;
+        public int Strength;
+        public float Duration;
+        public float RemainingTime;
+        public ActiveEffect(Effect effect, int strength, float duration) {
+            Effect = effect;
+            Strength = strength;
+            Duration = duration;
+            RemainingTime = duration;
+        }
+
+    }
+    private List<ActiveEffect> _activeEffects = new();
+
     protected virtual void Start() {
         healthPoints = maxHealthPoints;
     }
@@ -21,6 +40,7 @@ public abstract class Character: MonoBehaviour {
         }
     }
 
+    // movement and velocity
     public void AddVelocity(Vector2 velocity) {
         if (rb != null) {
             rb.linearVelocity += velocity;
@@ -45,15 +65,6 @@ public abstract class Character: MonoBehaviour {
         }
     }
 
-
-    public virtual void TakeDamage(int damage) {
-        if (_isVulnerable) healthPoints -= damage;
-    }
-
-    public virtual void Heal(int health) {
-        healthPoints += health;
-    }
-
     protected bool CanMove() {
         return _movementTimeout <= 0f;
     }
@@ -70,8 +81,23 @@ public abstract class Character: MonoBehaviour {
         _movementTimeout = timeout;
     }
 
+    // Health
+
     private void SetVulnerability(bool isVulnerable) {
         _isVulnerable = isVulnerable;
+    }
+
+    public virtual void TakeDamage(int damage) {
+        if (_isVulnerable) healthPoints -= damage;
+    }
+
+    public virtual void Heal(int health) {
+        healthPoints += health;
+    }
+
+    // Status effects
+    public void ApplyEffect(Effect effect, int strength) {
+
     }
 }
 }
