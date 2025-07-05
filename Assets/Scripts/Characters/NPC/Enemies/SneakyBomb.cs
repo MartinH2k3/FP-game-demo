@@ -22,7 +22,6 @@ public class SneakyBomb : Enemy
     [SerializeField] private LayerMask playerLayer;
     [SerializeField] private float detectionRadius = 5f;
     [SerializeField] private float diggingUpDuration = 2f;
-    [SerializeField] private float pursuingSpeed = 2f;
     private float _activeDiggingUpDuration;
     // for performance reasons, to not check on every frame
     private float _detectionCooldown = 0.2f;
@@ -90,7 +89,7 @@ public class SneakyBomb : Enemy
 
     private void Pursue() {
         int direction = _player!.transform.position.x > transform.position.x ? 1 : -1;
-        SetVelocity(direction * pursuingSpeed, rb.linearVelocity.y);
+        SetVelocity(direction * movementSpeed, rb.linearVelocity.y);
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {

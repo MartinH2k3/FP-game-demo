@@ -10,6 +10,9 @@ public abstract class Character: MonoBehaviour {
     [SerializeField] protected int maxHealthPoints = 100;
     [SerializeField] protected int healthPoints;
     [SerializeField] protected Rigidbody2D rb;
+    // movement
+    [SerializeField] protected float baseMovementSpeed = 3;
+    protected float movementSpeed;
 
     private float _movementTimeout; // Unable to move after knockback or something alike
     private bool _isVulnerable = true;
@@ -32,6 +35,7 @@ public abstract class Character: MonoBehaviour {
 
     protected virtual void Start() {
         healthPoints = maxHealthPoints;
+        movementSpeed = baseMovementSpeed;
     }
 
     protected virtual void Update() {

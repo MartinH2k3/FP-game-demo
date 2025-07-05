@@ -17,8 +17,6 @@ public class Charger : Enemy
         Attacking
     }
     private State _currentState = State.Roaming;
-    // Roaming
-    [SerializeField] private float movementSpeed;
     [SerializeField] private float roamingRange;
     private Vector2 _roamingStartPosition;
     [SerializeField] private float turningTimer;

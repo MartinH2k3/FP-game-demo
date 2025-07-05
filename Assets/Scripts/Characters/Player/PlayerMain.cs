@@ -17,9 +17,7 @@ public class PlayerMain : Character
         Spell,
         Weapon,
     }
-    // movement
-    public float baseMovementSpeed = 3;
-    private float _movementSpeed;
+
         // jumping
     private bool _onGround;
     public int jumpStrength = 5;
@@ -98,7 +96,6 @@ public class PlayerMain : Character
 
     protected override void Start() {
         base.Start();
-        _movementSpeed = baseMovementSpeed;
     }
 
     protected override void Update() {
@@ -130,7 +127,7 @@ public class PlayerMain : Character
 
         if (_canClimb) {
             rb.gravityScale = 0;
-            SetVelocity(_moveInput.x * _movementSpeed, _moveInput.y * _movementSpeed);
+            SetVelocity(_moveInput.x * movementSpeed, _moveInput.y * movementSpeed);
         } else if (_isDashing) {
             _activeDashDuration = Math.Max(_activeDashDuration - Time.deltaTime, 0);
             if (_activeDashDuration <= 0) {
@@ -141,7 +138,7 @@ public class PlayerMain : Character
         else {
             rb.gravityScale = 1;
             // using Math instead of Mathf, because in Update() method, Mathf.Sign(0) returns 1 (some sort of bug)
-            SetVelocity(Math.Sign(_moveInput.x) * _movementSpeed, rb.linearVelocity.y);
+            SetVelocity(Math.Sign(_moveInput.x) * movementSpeed, rb.linearVelocity.y);
         }
     }
 
@@ -149,7 +146,6 @@ public class PlayerMain : Character
         if (_attackCooldown > 0) return;
         _attackCooldown = baseStats.attackSpeed;
 
-        Debug.Log("attack");
         var targets = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, hittableLayerMask);
 
         // attack point on left but facing right
@@ -255,8 +251,8 @@ public class PlayerMain : Character
     }
 
     private void Sprint(InputAction.CallbackContext context) {
-        if (context.performed) _movementSpeed = baseMovementSpeed * 2;
-        else if (context.canceled) _movementSpeed = baseMovementSpeed;
+        if (context.performed) movementSpeed = baseMovementSpeed * 2;
+        else if (context.canceled) movementSpeed = baseMovementSpeed;
     }
 
     private void OnCollisionStay2D(Collision2D collision) {
