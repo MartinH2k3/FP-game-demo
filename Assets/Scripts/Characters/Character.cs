@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using GameMechanics.StatusEffects;
 
@@ -18,20 +16,18 @@ public abstract class Character: MonoBehaviour {
     private bool _isVulnerable = true;
     private bool _canBeMovedByOutsideForces = true;
 
-    private class ActiveEffect {
-        public Effect Effect;
+    private class ActiveEffectInfo {
         public int Strength;
         public float Duration;
         public float RemainingTime;
-        public ActiveEffect(Effect effect, int strength, float duration) {
-            Effect = effect;
+        public ActiveEffectInfo(int strength, float duration) {
             Strength = strength;
             Duration = duration;
             RemainingTime = duration;
         }
 
     }
-    private List<ActiveEffect> _activeEffects = new();
+    private Dictionary<Effect, ActiveEffectInfo> _activeEffects = new();
 
     protected virtual void Start() {
         healthPoints = maxHealthPoints;
@@ -39,8 +35,25 @@ public abstract class Character: MonoBehaviour {
     }
 
     protected virtual void Update() {
+        ManageCooldowns();
+    }
+
+    protected void LateUpdate() {
+        ApplyMovementEffects();
+    }
+
+    private void ManageCooldowns() {
         if (_movementTimeout > 0f) {
             _movementTimeout -= Time.deltaTime;
+        }
+
+        foreach (var effect in _activeEffects.Keys) {
+            if (_activeEffects.TryGetValue(effect, out var activeEffectInfo)) {
+                activeEffectInfo.RemainingTime -= Time.deltaTime;
+                if (activeEffectInfo.RemainingTime <= 0f) {
+                    _activeEffects.Remove(effect);
+                }
+            }
         }
     }
 
@@ -100,8 +113,52 @@ public abstract class Character: MonoBehaviour {
     }
 
     // Status effects
-    public void ApplyEffect(Effect effect, int strength) {
+    public void AddEffect(Effect effect, int strength) {
+        _activeEffects.TryGetValue(effect, out var activeEffectInfo);
+        if (activeEffectInfo != null) {
+            // If new effect is stronger, replace it
+            if (strength > activeEffectInfo.Strength) {
+                activeEffectInfo.Strength = strength;
+                activeEffectInfo.RemainingTime = StatusDurations.Instance.GetDuration(effect, strength);
+            }
+            // If the effect is already active with the same strength, reset its duration
+            else if (strength == activeEffectInfo.Strength) {
+                activeEffectInfo.RemainingTime = StatusDurations.Instance.GetDuration(effect, strength);
+            }
+            // If the effect is weaker, extend its duration fractionally
+            else {
+                activeEffectInfo.RemainingTime = Mathf.Min(activeEffectInfo.RemainingTime +
+                                                           activeEffectInfo.Duration * strength / activeEffectInfo.Strength,
+                    activeEffectInfo.Duration);
+            }
+        }
+        else {
+            Debug.Log("Added new effect: " + effect + " with strength: " + strength);
+            // If the effect is not active, add it to the dictionary
+            _activeEffects[effect] = new ActiveEffectInfo(strength, StatusDurations.Instance.GetDuration(effect, strength));
+        }
+    }
 
+    public void ApplyMovementEffects() {
+        if (_activeEffects.TryGetValue(Effect.Slow, out var slowEffect)) {
+            Debug.Log("Applying slow");
+            ApplySlow(slowEffect);
+        }
+        if (_activeEffects.TryGetValue(Effect.Stun, out _)) {
+            ApplyStun();
+        }
+    }
+
+
+    private void ApplySlow(ActiveEffectInfo slowInfo) {
+        if (rb is null) return;
+        var slowFactor = SlowFactors.Instance.GetSlowFactor(slowInfo.Strength);
+        movementSpeed = baseMovementSpeed * (1 - slowFactor);
+    }
+
+    private void ApplyStun() {
+        if (rb is null) return;
+        SetVelocity(Vector2.zero);
     }
 }
 }

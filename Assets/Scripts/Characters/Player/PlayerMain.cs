@@ -1,5 +1,6 @@
 using System;
 using Characters.NPC.Enemies;
+using GameMechanics.StatusEffects;
 using Managers;
 using Physics;
 using Helpers;
