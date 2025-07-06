@@ -5,7 +5,7 @@ namespace Environment.Movable
 public abstract class MovableEnvElement: EnvElement
 {
     // used for velocity and gravity scale
-    private Rigidbody2D rb;
+    [SerializeField] protected Rigidbody2D rb;
 
     public void AddVelocity(Vector2 velocity) {
         if (rb != null) {
