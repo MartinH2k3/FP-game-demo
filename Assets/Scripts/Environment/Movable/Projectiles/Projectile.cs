@@ -1,21 +1,54 @@
-﻿using GameMechanics.StatusEffects;
-using Unity.VisualScripting;
+﻿using Characters;
+using GameMechanics.StatusEffects;
+using Helpers;
+using Physics;
 using UnityEngine;
 
 namespace Environment.Movable.Projectiles
 {
 public abstract class Projectile: MovableEnvElement
 {
-    public bool destroyedOnHit;
+    [SerializeField] protected float speed = 15f;
+    [SerializeField] private bool destroyedOnHit = true;
     // Set if damages players, enemies or both
     [SerializeField] private LayerMask targetLayers;
+    [SerializeField] private LayerMask obstacleLayers;
     [SerializeField] private int damage;
     [SerializeField] private float knockBack; // a lot for physical projectiles, low or 0 for spells
-    public StatusEffect effect;
+    public Effect effect;
     [SerializeField] private int effectStrength;
 
-    private void OnCollisionEnter2D(Collision2D collision) {
 
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, obstacleLayers)) {
+
+        }
+        else if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, targetLayers)) {
+            var target = collision.gameObject.GetComponent<Character>();
+            if (target != null) {
+                // Apply damage
+                target.TakeDamage(damage);
+
+                // Apply knockback
+                if (knockBack > 0) {
+                    var direction = (collision.transform.position - transform.position).normalized;
+                    CrowdControl.Knockback(target, knockBack, 0, direction.x > 0 ? 1 : -1);
+                }
+
+                // Apply status effect
+                if (effect != Effect.None) {
+                    target.AddEffect(effect, effectStrength);
+                }
+            }
+        }
+
+        if (destroyedOnHit) {
+            Destroy(gameObject);
+        }
     }
+
+    public abstract void Launch();
+
+    public abstract void Launch(float x, float y);
 }
 }
