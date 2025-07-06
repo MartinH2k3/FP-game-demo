@@ -2,7 +2,7 @@
 
 namespace Environment.Movable
 {
-public class MovableEnvElement: EnvElement
+public abstract class MovableEnvElement: EnvElement
 {
     // used for velocity and gravity scale
     private Rigidbody2D rb;

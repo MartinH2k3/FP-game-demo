@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Environment.Movable.Projectiles
 {
-public class Projectile: MovableEnvElement
+public abstract class Projectile: MovableEnvElement
 {
     public bool destroyedOnHit;
     // Set if damages players, enemies or both

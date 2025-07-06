@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Environment
 {
-public class EnvElement: MonoBehaviour
+public abstract class EnvElement: MonoBehaviour
 {
     protected virtual void Start() {
 
