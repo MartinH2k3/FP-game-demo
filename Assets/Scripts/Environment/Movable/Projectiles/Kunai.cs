@@ -32,7 +32,7 @@ public class Kunai : Projectile {
     }
 
     public override void Launch(float x, float y) {
-        var direction = new Vector2(x, y).normalized;
+        var direction = (new Vector2(x, y) - (Vector2)transform.position).normalized;
         SetVelocity(direction * speed);
         _shouldRotate = true;
     }

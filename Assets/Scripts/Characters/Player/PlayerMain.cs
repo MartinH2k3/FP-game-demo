@@ -1,5 +1,6 @@
 using System;
 using Characters.NPC.Enemies;
+using Environment.Movable.Projectiles;
 using GameMechanics.StatusEffects;
 using Managers;
 using Physics;
@@ -14,9 +15,9 @@ namespace Characters.Player
 public class PlayerMain : Character
 {
     private enum AttackType {
-        Punch,
+        Melee,
         Spell,
-        Weapon,
+        Ranged,
     }
 
         // jumping
@@ -43,7 +44,10 @@ public class PlayerMain : Character
     // attack
     [SerializeField] private float attackRange;
     private float _attackCooldown;
-    private AttackType _activeAttackType;
+    private AttackType _activeAttackType = AttackType.Melee;
+    [SerializeField] private Projectile rangedWeapon;
+    // TODO add spell field
+
     // stats
     public BaseStats baseStats;
     // game object references
@@ -60,6 +64,7 @@ public class PlayerMain : Character
     private InputAction _sprint;
     private InputAction _dash;
     private InputAction _attack;
+    private InputAction _attackTypeChoice;
     // visual && animations
     private bool _isFacingRight = true; // used for flipping the sprite
     [SerializeField] private Animator animator;
@@ -88,6 +93,9 @@ public class PlayerMain : Character
         _attack = _inputActions.Player.Attack;
         _attack.Enable();
         _attack.performed += Attack;
+        _attackTypeChoice = _inputActions.Player.OptionChoice;
+        _attackTypeChoice.Enable();
+        _attackTypeChoice.performed += AttackTypeChoice;
     }
 
     private void OnDisable() {
@@ -147,7 +155,7 @@ public class PlayerMain : Character
         if (_attackCooldown > 0) return;
         _attackCooldown = baseStats.attackSpeed;
 
-        var targets = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, hittableLayerMask);
+
 
         // attack point on left but facing right
         if (attackPoint.position.x < transform.position.x && _isFacingRight) {
@@ -160,29 +168,40 @@ public class PlayerMain : Character
             attackPoint.position = new Vector2(transform.position.x - diff, transform.position.y);
         }
 
-        int damage = 0;
-        float knockback = 0;
         switch (_activeAttackType) {
-            case AttackType.Punch:
-                // TODO add melee weapon add-ons
-                damage = baseStats.strength + baseStats.attackDamage * baseStats.attackDamageModifier;
-                knockback = 3;
+            case AttackType.Melee:
+                MeleeAttack();
                 break;
             case AttackType.Spell:
                 // TODO implement
                 break;
-            case AttackType.Weapon:
-                // TODO implement
+            case AttackType.Ranged:
+                RangedAttack();
                 break;
             default:
-                damage = 1;
                 break;
         }
+
+    }
+
+    private void MeleeAttack() {
+        int damage = baseStats.strength + baseStats.attackDamage * baseStats.attackDamageModifier;
+        float knockback = (float)baseStats.strength / 2; // TODO add some table for this
+
+        var targets = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, hittableLayerMask);
+
         foreach (var target in targets) {
             var enemy = target.gameObject.GetComponent<Enemy>();
             enemy.TakeDamage(damage);
             CrowdControl.Knockback(enemy, knockback, knockback, _isFacingRight ? 1 : -1);
         }
+    }
+
+    private void RangedAttack() {
+        Projectile weaponInstance = Instantiate(rangedWeapon, attackPoint.position, Quaternion.identity);
+        Vector2 cursorPos = Mouse.current.position.ReadValue();
+        Vector3 inGameCursorPos = Camera.main.ScreenToWorldPoint(new Vector3(cursorPos.x, cursorPos.y, -Camera.main.transform.position.z));
+        weaponInstance.Launch(inGameCursorPos.x, inGameCursorPos.y);
     }
 
     private void Jump(InputAction.CallbackContext context) {
@@ -325,6 +344,26 @@ public class PlayerMain : Character
     // Debug
     private void OnDrawGizmos() {
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
+    public void AttackTypeChoice(InputAction.CallbackContext context) {
+        if (!context.performed) return;
+
+        var value = _attackTypeChoice.ReadValue<float>();
+        var index = Mathf.Clamp(
+            Mathf.RoundToInt(value),
+            0,
+            System.Enum.GetValues(typeof(AttackType)).Length - 1);
+
+        var chosenAttackType = (AttackType)index;
+        if (chosenAttackType == _activeAttackType) return;
+        if (chosenAttackType == AttackType.Ranged && rangedWeapon == null) return; // Possibly add a tooltip or something
+
+        SetActiveAttackType(chosenAttackType);
+
+    }
+    private void SetActiveAttackType(AttackType attackType) {
+        _activeAttackType = attackType;
     }
 }
 }
