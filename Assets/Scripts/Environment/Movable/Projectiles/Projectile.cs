@@ -27,9 +27,9 @@ public abstract class Projectile: MonoBehaviour
         // Handle any updates needed for the projectile
     }
 
-    private void OnCollisionEnter2D(Collision2D collision) {
+    protected void OnCollisionEnter2D(Collision2D collision) {
         if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, obstacleLayers)) {
-
+            Debug.Log("Collision with obstacle: " + collision.gameObject.name);
         }
         else if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, targetLayers)) {
             var target = collision.gameObject.GetComponent<Character>();
@@ -49,6 +49,7 @@ public abstract class Projectile: MonoBehaviour
                 }
             }
         }
+        else return;
 
         if (destroyedOnHit) {
             Destroy(gameObject);

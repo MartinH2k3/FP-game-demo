@@ -23,15 +23,17 @@
     - [ ] Mage, stationary, shoots fireballs at player
     - [ ] Swordsman, walks toward player, attacks with sword
   - [ ] Boss 
-    - [ ] 3 boss ideas
+    - [ ] 3 boss mechanic ideas
 
 
 # Week 3: 7.7.
+- Week 2 harder than expected -> continue working on enemies
+
+# Week 4: 14.7.
 - [ ] Design and implement inventory system
   - [ ] Inventory UI
   - [ ] Item management (add/remove items)
   - [ ] Item types (weapons, potions, etc.)
-- Finish Week 2
 
 
 # Unassigned
