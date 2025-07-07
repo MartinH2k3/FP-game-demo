@@ -89,7 +89,7 @@ public class SneakyBomb : Enemy
 
     private void Pursue() {
         int direction = _player!.transform.position.x > transform.position.x ? 1 : -1;
-        SetVelocity(direction * movementSpeed, rb.linearVelocity.y);
+        this.SetVelocity(direction * movementSpeed, rb.linearVelocity.y);
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {

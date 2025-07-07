@@ -1,11 +1,14 @@
-﻿using UnityEngine;
+﻿using Physics;
+using UnityEngine;
 
 namespace Environment.Movable.Projectiles
 {
-public class Kunai : Projectile {
+public class Kunai : Projectile, IPhysicsMovable {
     private bool _shouldRotate;
     [SerializeField] private float rotationSpeed = 180f; // degrees per second
     private Quaternion _targetRotation;
+    [SerializeField] private Rigidbody2D rb;
+    public Rigidbody2D Rigidbody => rb;
 
     protected override void Update() {
         base.Update();
@@ -33,7 +36,7 @@ public class Kunai : Projectile {
 
     public override void Launch(float x, float y) {
         var direction = (new Vector2(x, y) - (Vector2)transform.position).normalized;
-        SetVelocity(direction * speed);
+        this.SetVelocity(direction * speed);
         _shouldRotate = true;
     }
 

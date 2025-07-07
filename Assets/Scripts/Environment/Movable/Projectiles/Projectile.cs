@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Environment.Movable.Projectiles
 {
-public abstract class Projectile: MovableEnvElement
+public abstract class Projectile: MonoBehaviour
 {
     [SerializeField] protected float speed = 15f;
     [SerializeField] private bool destroyedOnHit = true;
@@ -18,6 +18,14 @@ public abstract class Projectile: MovableEnvElement
     public Effect effect;
     [SerializeField] private int effectStrength;
 
+
+    protected virtual void Start() {
+        // Initialize any necessary components or variables
+    }
+
+    protected virtual void Update() {
+        // Handle any updates needed for the projectile
+    }
 
     private void OnCollisionEnter2D(Collision2D collision) {
         if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, obstacleLayers)) {

@@ -1,7 +1,6 @@
 using System;
 using Characters.NPC.Enemies;
 using Environment.Movable.Projectiles;
-using GameMechanics.StatusEffects;
 using Managers;
 using Physics;
 using Helpers;
@@ -136,7 +135,7 @@ public class PlayerMain : Character
 
         if (_canClimb) {
             rb.gravityScale = 0;
-            SetVelocity(_moveInput.x * movementSpeed, _moveInput.y * movementSpeed);
+            this.SetVelocity(_moveInput.x * movementSpeed, _moveInput.y * movementSpeed);
         } else if (_isDashing) {
             _activeDashDuration = Math.Max(_activeDashDuration - Time.deltaTime, 0);
             if (_activeDashDuration <= 0) {
@@ -147,7 +146,7 @@ public class PlayerMain : Character
         else {
             rb.gravityScale = 1;
             // using Math instead of Mathf, because in Update() method, Mathf.Sign(0) returns 1 (some sort of bug)
-            SetVelocity(Math.Sign(_moveInput.x) * movementSpeed, rb.linearVelocity.y);
+            this.SetVelocity(Math.Sign(_moveInput.x) * movementSpeed, rb.linearVelocity.y);
         }
     }
 
@@ -207,7 +206,7 @@ public class PlayerMain : Character
     private void Jump(InputAction.CallbackContext context) {
         if (!CanJump()) return;
 
-        SetVelocity(rb.linearVelocity.x, jumpStrength);
+        this.SetVelocity(rb.linearVelocity.x, jumpStrength);
         _activeJumpCooldown = jumpCooldown;
 
         if (_onGround) {
@@ -246,7 +245,7 @@ public class PlayerMain : Character
             _activeDashCooldown = dashCooldown;
             _activeDashDuration = dashDuration;
 
-            SetVelocity(_isFacingRight ? dashStrength : -dashStrength, 0);
+            this.SetVelocity(_isFacingRight ? dashStrength : -dashStrength, 0);
         }
     }
 

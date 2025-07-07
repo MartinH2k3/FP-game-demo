@@ -106,7 +106,7 @@ public class Charger : Enemy
         if ((Vector2.Distance(transform.position, _roamingStartPosition) < roamingRange || _turningLocked)
             && CanWalkForward()) {
             // Move in the current direction
-            SetVelocity(walkingDirection.x * movementSpeed, rb.linearVelocity.y);
+            this.SetVelocity(walkingDirection.x * movementSpeed, rb.linearVelocity.y);
 
             if (!_turningLocked) return;
 
@@ -118,7 +118,7 @@ public class Charger : Enemy
         }
         else {
             TurnAround();
-            SetVelocity(walkingDirection.x * movementSpeed, rb.linearVelocity.y);
+            this.SetVelocity(walkingDirection.x * movementSpeed, rb.linearVelocity.y);
         }
     }
 
@@ -146,12 +146,12 @@ public class Charger : Enemy
 
     private void Stop() {
         if (!CanMove()) return;
-        SetVelocity(0, rb.linearVelocity.y);
+        this.SetVelocity(0, rb.linearVelocity.y);
     }
 
 
     private void Attack() {
-        SetVelocity(walkingDirection.x * chargeSpeed, rb.linearVelocity.y);
+        this.SetVelocity(walkingDirection.x * chargeSpeed, rb.linearVelocity.y);
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {

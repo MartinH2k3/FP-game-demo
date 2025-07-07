@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using GameMechanics.StatusEffects;
+using Physics;
 
 namespace Characters
 {
-public abstract class Character: MonoBehaviour {
+public abstract class Character: MonoBehaviour, IPhysicsMovable {
     [SerializeField] protected int maxHealthPoints = 100;
     [SerializeField] protected int healthPoints;
     [SerializeField] protected Rigidbody2D rb;
+    public Rigidbody2D Rigidbody => rb;
+
     // movement
     [SerializeField] protected float baseMovementSpeed = 3;
     protected float movementSpeed;
@@ -58,30 +61,6 @@ public abstract class Character: MonoBehaviour {
     }
 
     // movement and velocity
-    public void AddVelocity(Vector2 velocity) {
-        if (rb != null) {
-            rb.linearVelocity += velocity;
-        }
-    }
-
-    public void AddVelocity(float x, float y) {
-        if (rb != null) {
-            rb.linearVelocity += new Vector2(x, y);
-        }
-    }
-
-    public void SetVelocity(Vector2 velocity) {
-        if (rb != null) {
-            rb.linearVelocity = velocity;
-        }
-    }
-
-    public void SetVelocity(float x, float y) {
-        if (rb is not null) {
-            rb.linearVelocity = new Vector2(x, y);
-        }
-    }
-
     protected bool CanMove() {
         return _movementTimeout <= 0f;
     }
@@ -158,7 +137,7 @@ public abstract class Character: MonoBehaviour {
 
     private void ApplyStun() {
         if (rb is null) return;
-        SetVelocity(Vector2.zero);
+        this.SetVelocity(Vector2.zero);
     }
 }
 }
