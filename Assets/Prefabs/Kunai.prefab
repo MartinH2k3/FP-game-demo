@@ -137,7 +137,7 @@ MonoBehaviour:
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 8
-  damage: 850
+  damage: 20
   knockBack: 1
   effect: 0
   effectStrength: 0
