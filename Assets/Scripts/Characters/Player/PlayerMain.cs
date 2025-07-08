@@ -197,7 +197,7 @@ public class PlayerMain : Character
     }
 
     private void RangedAttack() {
-        Projectile weaponInstance = Instantiate(rangedWeapon, attackPoint.position, Quaternion.identity);
+        Projectile weaponInstance = Instantiate(rangedWeapon, transform.position, Quaternion.identity);
         Vector2 cursorPos = Mouse.current.position.ReadValue();
         Vector3 inGameCursorPos = Camera.main.ScreenToWorldPoint(new Vector3(cursorPos.x, cursorPos.y, -Camera.main.transform.position.z));
         weaponInstance.Launch(inGameCursorPos.x, inGameCursorPos.y);
