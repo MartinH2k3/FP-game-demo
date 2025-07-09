@@ -13,11 +13,6 @@ namespace Characters.Player
 
 public class PlayerMain : Character
 {
-    private enum AttackType {
-        Melee,
-        Ranged,
-        Spell,
-    }
 
         // jumping
     private bool _onGround;
