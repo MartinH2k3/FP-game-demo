@@ -30,6 +30,7 @@ public abstract class Projectile: MonoBehaviour
     protected void OnCollisionEnter2D(Collision2D collision) {
         if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, obstacleLayers)) {
             // implement something, I guess
+            Debug.Log("Objection");
         }
         else if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, targetLayers)) {
             var target = collision.gameObject.GetComponent<Character>();
