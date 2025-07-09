@@ -99,6 +99,7 @@ public class PlayerMain : Character
 
     protected override void Start() {
         base.Start();
+        SetActiveAttackType(AttackType.Melee);
     }
 
     protected override void Update() {
@@ -171,8 +172,6 @@ public class PlayerMain : Character
                 break;
             case AttackType.Ranged:
                 RangedAttack();
-                break;
-            default:
                 break;
         }
 
@@ -358,6 +357,7 @@ public class PlayerMain : Character
     }
     private void SetActiveAttackType(AttackType attackType) {
         _activeAttackType = attackType;
+        uiManager.SetActiveAttackType(attackType);
     }
 }
 }
