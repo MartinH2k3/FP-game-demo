@@ -15,8 +15,8 @@ public class PlayerMain : Character
 {
     private enum AttackType {
         Melee,
-        Spell,
         Ranged,
+        Spell,
     }
 
         // jumping
@@ -152,7 +152,7 @@ public class PlayerMain : Character
 
     public void Attack(InputAction.CallbackContext context) {
         if (_attackCooldown > 0) return;
-        _attackCooldown = baseStats.attackSpeed;
+        _attackCooldown = 1/baseStats.attackSpeed;
 
 
 
@@ -197,9 +197,9 @@ public class PlayerMain : Character
     }
 
     private void RangedAttack() {
-        Projectile weaponInstance = Instantiate(rangedWeapon, transform.position, Quaternion.identity);
-        Vector2 cursorPos = Mouse.current.position.ReadValue();
-        Vector3 inGameCursorPos = Camera.main.ScreenToWorldPoint(new Vector3(cursorPos.x, cursorPos.y, -Camera.main.transform.position.z));
+        var weaponInstance = Instantiate(rangedWeapon, transform.position, Quaternion.identity);
+        var cursorPos = Mouse.current.position.ReadValue();
+        var inGameCursorPos = Camera.main.ScreenToWorldPoint(new Vector3(cursorPos.x, cursorPos.y, -Camera.main.transform.position.z));
         weaponInstance.Launch(inGameCursorPos.x, inGameCursorPos.y);
     }
 
