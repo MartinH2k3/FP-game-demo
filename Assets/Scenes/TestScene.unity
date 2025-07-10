@@ -391,7 +391,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
     m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
-    m_DisabledColor: {r: 0.44654083, g: 0, b: 0, a: 0.5019608}
+    m_DisabledColor: {r: 0.44654083, g: 0, b: 0, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -405,7 +405,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 29191829}
   m_FillRect: {fileID: 29191828}
   m_HandleRect: {fileID: 0}
@@ -568,8 +568,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 3
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d25904425e05f3f4b99e60a057daafc0, type: 2}
+  m_sharedMaterial: {fileID: -9056958501809492808, guid: d25904425e05f3f4b99e60a057daafc0, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -887,8 +887,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 2
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d25904425e05f3f4b99e60a057daafc0, type: 2}
+  m_sharedMaterial: {fileID: -9056958501809492808, guid: d25904425e05f3f4b99e60a057daafc0, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2140,7 +2140,7 @@ MonoBehaviour:
   dashCooldown: 0.7
   dashDuration: 0.2
   attackRange: 0.5
-  rangedWeapon: {fileID: 3054573626214305656, guid: fe012020ea9e45942acb22974b68db58, type: 3}
+  rangedWeapon: {fileID: 318464623196185695, guid: c43e30e728202144eb42ba8e2879a596, type: 3}
   baseStats:
     healthPoints: 100
     mana: 50
@@ -2365,8 +2365,8 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d25904425e05f3f4b99e60a057daafc0, type: 2}
+  m_sharedMaterial: {fileID: -9056958501809492808, guid: d25904425e05f3f4b99e60a057daafc0, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
