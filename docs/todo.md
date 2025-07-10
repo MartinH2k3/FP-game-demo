@@ -28,7 +28,10 @@
 
 # Week 3: 7.7.
 - Week 2 harder than expected -> continue working on enemies
-
+- [ ] Weapons
+  - [ ] Axe - Thrown, spinning on flyting, can be picked up, gravity affected
+  - [ ] Bouncy ball, explodes on impact with enemy or after timeout
+  
 # Week 4: 14.7.
 - [ ] Design and implement inventory system
   - [ ] Inventory UI
