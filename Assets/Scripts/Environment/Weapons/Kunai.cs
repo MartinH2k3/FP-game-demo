@@ -1,7 +1,7 @@
 ﻿using Physics;
 using UnityEngine;
 
-namespace Environment.Movable.Projectiles
+namespace Environment.Weapons
 {
 public class Kunai : Projectile, IPhysicsMovable {
     private bool _shouldRotate;

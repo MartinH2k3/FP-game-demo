@@ -1,7 +1,7 @@
 using Physics;
 using UnityEngine;
 
-namespace Environment.Movable.Projectiles {
+namespace Environment.Weapons {
 public class Axe : Projectile, IPhysicsMovable {
     [SerializeField] private Rigidbody2D rb;
     public Rigidbody2D Rigidbody => rb;

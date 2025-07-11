@@ -1,6 +1,6 @@
 using System;
 using Characters.NPC.Enemies;
-using Environment.Movable.Projectiles;
+using Environment.Weapons;
 using Managers;
 using Physics;
 using Helpers;

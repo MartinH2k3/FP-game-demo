@@ -4,7 +4,7 @@ using Helpers;
 using Physics;
 using UnityEngine;
 
-namespace Environment.Movable.Projectiles
+namespace Environment.Weapons
 {
 public abstract class Projectile: MonoBehaviour
 {
