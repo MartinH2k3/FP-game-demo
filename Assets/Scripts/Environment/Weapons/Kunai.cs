@@ -5,12 +5,10 @@ using UnityEngine;
 
 namespace Environment.Weapons
 {
-public class Kunai : Projectile, IPhysicsMovable {
+public class Kunai : ThrowableWeapon {
     private bool _shouldRotate;
     [SerializeField] private float rotationSpeed = 180f; // degrees per second
     private Quaternion _targetRotation;
-    [SerializeField] private Rigidbody2D rb;
-    public Rigidbody2D Rigidbody => rb;
 
     protected override void Update() {
         base.Update();
@@ -45,14 +43,14 @@ public class Kunai : Projectile, IPhysicsMovable {
         _targetRotation = Quaternion.Euler(0, 0, angle);
     }
 
-    protected void OnCollisionEnter2D(Collision2D collision) {
-
-        if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, obstacleLayers)) {
+    protected override void OnCollisionEnter2D(Collision2D other) {
+        base.OnCollisionEnter2D(other);
+        if (HelperMethods.LayerInLayerMask(other.gameObject.layer, obstacleLayers)) {
             // implement something, I guess
             Debug.Log("Objection");
         }
-        else if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, targetLayers)) {
-            HitTarget(collision.gameObject.GetComponent<Character>());
+        else if (HelperMethods.LayerInLayerMask(other.gameObject.layer, targetLayers)) {
+            HitTarget(other.gameObject.GetComponent<Character>());
         }
 
     }

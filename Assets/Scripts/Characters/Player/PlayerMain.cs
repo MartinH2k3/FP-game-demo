@@ -1,5 +1,4 @@
 using System;
-using Characters.NPC.Enemies;
 using Environment.Weapons;
 using Managers;
 using Physics;
@@ -13,7 +12,6 @@ namespace Characters.Player
 
 public class PlayerMain : Character
 {
-
         // jumping
     private bool _onGround;
     public int jumpStrength = 5;
@@ -39,8 +37,11 @@ public class PlayerMain : Character
     [SerializeField] private float attackRange;
     private float _attackCooldown;
     private AttackType _activeAttackType = AttackType.Melee;
-    [SerializeField] private Projectile rangedWeapon;
+    [SerializeField] private ThrowableWeapon rangedWeapon;
     // TODO add spell field
+
+    // interaction
+    public ThrowableWeapon pickupableWeapon = null;
 
     // stats
     public BaseStats baseStats;
@@ -59,6 +60,7 @@ public class PlayerMain : Character
     private InputAction _dash;
     private InputAction _attack;
     private InputAction _attackTypeChoice;
+    private InputAction _interact;
     // visual && animations
     private bool _isFacingRight = true; // used for flipping the sprite
     [SerializeField] private Animator animator;
@@ -90,11 +92,38 @@ public class PlayerMain : Character
         _attackTypeChoice = _inputActions.Player.OptionChoice;
         _attackTypeChoice.Enable();
         _attackTypeChoice.performed += AttackTypeChoice;
+        _interact = _inputActions.Player.Interact;
+        _interact.Enable();
+        _interact.performed += Interact;
+    }
+
+    private void Interact(InputAction.CallbackContext context) {
+        if (!context.performed) return;
+
+        if (pickupableWeapon is not null) {
+            DropWeapon();
+            PickupWeapon();
+        }
+    }
+
+    private void DropWeapon() {
+        // TODO implement so that the weapon is dropped on the ground
+        rangedWeapon = null;
+    }
+
+    private void PickupWeapon() {
+        rangedWeapon = pickupableWeapon.Prefab();
+        Destroy(pickupableWeapon.gameObject);
     }
 
     private void OnDisable() {
         _jump.Disable();
         _move.Disable();
+        _sprint.Disable();
+        _dash.Disable();
+        _attack.Disable();
+        _attackTypeChoice.Disable();
+        _interact.Disable();
     }
 
     protected override void Start() {
@@ -184,7 +213,7 @@ public class PlayerMain : Character
         var targets = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, hittableLayerMask);
 
         foreach (var target in targets) {
-            var enemy = target.gameObject.GetComponent<Enemy>();
+            var enemy = target.gameObject.GetComponent<Character>();
             enemy.TakeDamage(damage);
             CrowdControl.Knockback(enemy, knockback, knockback, _isFacingRight ? 1 : -1);
         }
@@ -195,6 +224,7 @@ public class PlayerMain : Character
         var cursorPos = Mouse.current.position.ReadValue();
         var inGameCursorPos = Camera.main.ScreenToWorldPoint(new Vector3(cursorPos.x, cursorPos.y, -Camera.main.transform.position.z));
         weaponInstance.Launch(inGameCursorPos.x, inGameCursorPos.y);
+        if (weaponInstance.singleUse) rangedWeapon = null;
     }
 
     private void Jump(InputAction.CallbackContext context) {

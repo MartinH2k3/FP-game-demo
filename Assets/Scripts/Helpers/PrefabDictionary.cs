@@ -5,7 +5,7 @@ namespace Helpers {
 
 public class PrefabDictionary: MonoBehaviour {
     [SerializeField] private GameObject[] prefabs;
-    private Dictionary<string, GameObject> _prefabDictionary;
+    private Dictionary<string, GameObject> _prefabDictionary = new Dictionary<string, GameObject>();
     public static PrefabDictionary Instance { get; private set; }
     private void OnEnable() {
         Instance = this;
@@ -15,6 +15,7 @@ public class PrefabDictionary: MonoBehaviour {
     }
 
     public T GetPrefab<T>(string prefabName) {
+        prefabName = prefabName.EndsWith("(Clone)") ? prefabName.Replace("(Clone)", "").Trim() : prefabName;
         if (_prefabDictionary.TryGetValue(prefabName, out var prefab)) {
             return prefab.GetComponent<T>();
         }

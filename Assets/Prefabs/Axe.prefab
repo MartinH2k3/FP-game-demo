@@ -250,6 +250,7 @@ MonoBehaviour:
   effect: 0
   effectStrength: 0
   rb: {fileID: 284935286777553562}
+  singleUse: 1
   axeHead: {fileID: 1346528197417101823}
   axeHandle: {fileID: 8904535065852983655}
   spinningSpeed: 180

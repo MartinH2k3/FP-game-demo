@@ -212,11 +212,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.1057
+      value: 0.09
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.65
+      value: 5.51
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1030,12 +1030,16 @@ PrefabInstance:
       value: Wall (2)
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 7.0402837
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.81
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.8362
+      value: 0.2614
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1118,8 +1122,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b19b56a576254366adf920d6fd729d12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  durationTable: {fileID: 0}
-  slowFactors: {fileID: 0}
+  durationTable: {fileID: 11400000, guid: a1a0a96e0c147a444b466232283f1b05, type: 2}
+  slowFactors: {fileID: 11400000, guid: de0795267ac0d5747bb21754f0da83ff, type: 2}
 --- !u!1 &1189851988
 GameObject:
   m_ObjectHideFlags: 0
@@ -1349,11 +1353,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.48
+      value: 9.37
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.029
+      value: -0.07
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1785,6 +1789,7 @@ MonoBehaviour:
   dashDuration: 0.2
   attackRange: 0.5
   rangedWeapon: {fileID: 318464623196185695, guid: c43e30e728202144eb42ba8e2879a596, type: 3}
+  pickupableWeapon: {fileID: 0}
   baseStats:
     healthPoints: 100
     mana: 50
@@ -2676,11 +2681,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.1929
+      value: 0.19
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.581629
+      value: -5.47
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2794,11 +2799,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalScale.x
-      value: 8.396385
+      value: 8.630644
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.9007
+      value: 1.0178
       objectReference: {fileID: 0}
     - target: {fileID: 6455764693859573828, guid: f8da62d129e11334f93042cb9608bf17, type: 3}
       propertyPath: m_LocalPosition.y
