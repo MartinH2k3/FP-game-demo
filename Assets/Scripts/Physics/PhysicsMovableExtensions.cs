@@ -27,6 +27,15 @@ public static class PhysicsMovableExtensions {
             movable.Rigidbody.linearVelocity = new Vector2(x, y);
         }
     }
+
+    public static void Freeze(this IPhysicsMovable movable) {
+        movable.SetVelocity(Vector2.zero);
+        movable.Rigidbody.simulated = false;
+    }
+
+    public static void Unfreeze(this IPhysicsMovable movable) {
+        movable.Rigidbody.simulated = true;
+    }
 }
 
 }

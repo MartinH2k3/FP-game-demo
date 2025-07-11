@@ -1,4 +1,6 @@
-﻿using Physics;
+﻿using Characters;
+using Helpers;
+using Physics;
 using UnityEngine;
 
 namespace Environment.Weapons
@@ -17,7 +19,6 @@ public class Kunai : Projectile, IPhysicsMovable {
 
     private void Rotate() {
         if (!_shouldRotate) return;
-        Debug.Log("Kunai angle: " + transform.rotation.eulerAngles.z);
         // Spin baby, spin!
         transform.rotation = Quaternion.RotateTowards(
             transform.rotation,
@@ -26,7 +27,6 @@ public class Kunai : Projectile, IPhysicsMovable {
         );
         // Stop rotating when close
         if (Quaternion.Angle(transform.rotation, _targetRotation) < 0.1f) {
-            Debug.Log("Not spinning");
             _shouldRotate = false;
         }
     }
@@ -43,6 +43,18 @@ public class Kunai : Projectile, IPhysicsMovable {
         var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90; // - 90 to account for original rotation
         Debug.Log(angle);
         _targetRotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    protected void OnCollisionEnter2D(Collision2D collision) {
+
+        if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, obstacleLayers)) {
+            // implement something, I guess
+            Debug.Log("Objection");
+        }
+        else if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, targetLayers)) {
+            HitTarget(collision.gameObject.GetComponent<Character>());
+        }
+
     }
 
 }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4065801102103636481}
   - component: {fileID: 9090148403297839077}
   - component: {fileID: 6924330520735553079}
+  - component: {fileID: 5941461191860433971}
   m_Layer: 9
   m_Name: AxeHead
   m_TagString: Untagged
@@ -104,7 +105,44 @@ CapsuleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.36, y: 0.31}
+  m_Direction: 1
+--- !u!70 &5941461191860433971
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1346528197417101823}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 1015
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -123,7 +161,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.36, y: 0.25}
+  m_Size: {x: 0.3, y: 0.18}
   m_Direction: 1
 --- !u!1 &6368844802828511017
 GameObject:
@@ -203,15 +241,18 @@ MonoBehaviour:
   destroyedOnHit: 1
   targetLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   obstacleLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   damage: 15
   knockBack: 0
   effect: 0
   effectStrength: 0
   rb: {fileID: 284935286777553562}
+  axeHead: {fileID: 1346528197417101823}
+  axeHandle: {fileID: 8904535065852983655}
+  spinningSpeed: 180
 --- !u!1 &8904535065852983655
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,7 +357,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
