@@ -19,11 +19,11 @@ public abstract class Projectile: MonoBehaviour
     [SerializeField] private int effectStrength;
 
     protected virtual void Start() {
-        // Initialize any necessary components or variables
+
     }
 
     protected virtual void Update() {
-        // Handle any updates needed for the projectile
+
     }
 
 

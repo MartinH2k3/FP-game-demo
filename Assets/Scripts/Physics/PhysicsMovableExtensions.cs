@@ -39,6 +39,14 @@ public static class PhysicsMovableExtensions {
         movable.Rigidbody.bodyType = RigidbodyType2D.Dynamic;
         movable.Rigidbody.constraints = RigidbodyConstraints2D.None;
     }
+
+    public static Vector2 GetVelocity(this IPhysicsMovable movable) {
+        return movable.Rigidbody.linearVelocity;
+    }
+
+    public static Vector2 GetDirection(this IPhysicsMovable movable) {
+        return movable.Rigidbody.linearVelocity.normalized;
+    }
 }
 
 }

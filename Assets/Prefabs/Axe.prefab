@@ -253,7 +253,7 @@ MonoBehaviour:
   singleUse: 1
   axeHead: {fileID: 1346528197417101823}
   axeHandle: {fileID: 8904535065852983655}
-  spinningSpeed: 180
+  rotationMultiplier: 50
 --- !u!1 &8904535065852983655
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,8 +7,6 @@ namespace Environment.Weapons {
 public class Axe : ThrowableWeapon {
     [SerializeField] private GameObject axeHead;
     [SerializeField] private GameObject axeHandle;
-    [SerializeField] private float spinningSpeed = 180;
-
 
     public override void Launch() {
         this.SetVelocity(speed, 0);
@@ -19,15 +17,13 @@ public class Axe : ThrowableWeapon {
         var direction = (new Vector2(x, y) - (Vector2)transform.position).normalized;
         this.SetVelocity(direction * speed);
         State = WeaponStatus.Active;
-
-        if (direction.x < 0) {
-            transform.localScale = new Vector3(-1, 1, 1); // Flip the axe
-            spinningSpeed = -spinningSpeed;
-        }
     }
 
-    private void Rotate() {
-
+    protected override void Update() {
+        base.Update();
+        if (State != WeaponStatus.Active) return;
+        var spinningSpeed = -this.GetVelocity().x * 50;
+        transform.Rotate(0, 0, spinningSpeed * Time.deltaTime);
     }
 
     protected override void OnTriggerEnter2D(Collider2D other) {
