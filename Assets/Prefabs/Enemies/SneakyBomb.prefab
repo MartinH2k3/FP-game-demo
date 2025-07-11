@@ -193,7 +193,7 @@ MonoBehaviour:
   healthPoints: 0
   rb: {fileID: 2365054434648571067}
   baseMovementSpeed: 2
-  playerLayer:
+  targetLayer:
     serializedVersion: 2
     m_Bits: 128
   detectionRadius: 5

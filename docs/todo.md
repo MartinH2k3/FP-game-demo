@@ -29,11 +29,11 @@
 # Week 3: 7.7.
 - Week 2 harder than expected -> continue working on enemies
 - [ ] Weapons
-  - [ ] Axe
+  - [x] Axe
     - [x] Throwing
-    - [ ] Spinning on flying
-    - [ ] Stuck in wall
-    - [ ] Can be picked up again
+    - [x] Spinning on flying
+    - [x] Stuck in wall
+    - [x] Can be picked up again
   - [ ] Bouncy ball, explodes on impact with enemy or after timeout
   - [ ] Drop Weapon option
   
