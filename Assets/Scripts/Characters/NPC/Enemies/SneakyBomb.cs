@@ -1,6 +1,8 @@
 using System;
 using Characters.Player;
+using Helpers;
 using JetBrains.Annotations;
+using Managers;
 using Physics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -107,9 +109,10 @@ public class SneakyBomb : Enemy
     private void OnCollisionEnter2D(Collision2D collision) {
         if (_currentState != State.Pursuing) return;
 
-        if (collision.gameObject.TryGetComponent(out Character player)) {
+        if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, targetLayer) && collision.gameObject.TryGetComponent(out Character player)) {
             player.TakeDamage(explosionDamage);
             CrowdControl.Knockback(player, knockbackStrength, knockbackStrength, player.transform.position.x > transform.position.x ? 1 : -1);
+            EffectManager.Instance.CallExplosion(transform.position);
             Destroy(gameObject); // Destroy the bomb after it explodes
         }
     }
