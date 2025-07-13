@@ -221,9 +221,7 @@ public class PlayerMain : Character
 
     private void RangedAttack() {
         var weaponInstance = Instantiate(rangedWeapon, transform.position, Quaternion.identity);
-        var cursorPos = Mouse.current.position.ReadValue();
-        var inGameCursorPos = Camera.main.ScreenToWorldPoint(new Vector3(cursorPos.x, cursorPos.y, -Camera.main.transform.position.z));
-        weaponInstance.Launch(inGameCursorPos.x, inGameCursorPos.y);
+        weaponInstance.Launch();
         if (weaponInstance.singleUse) rangedWeapon = null;
     }
 

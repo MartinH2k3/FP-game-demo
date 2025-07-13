@@ -1,8 +1,8 @@
 ﻿using System;
 using Characters.Player;
 using Physics;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Environment.Weapons
 {
@@ -45,6 +45,17 @@ public abstract class ThrowableWeapon: Projectile, IPlayerWeapon, IPhysicsMovabl
         var boxColl = pickupRadius.AddComponent<BoxCollider2D>();
         boxColl.isTrigger = true;
         boxColl.size = new Vector2(2f, 0.7f);
+    }
+
+    // By default, launch at cursor position
+    public override void Launch() {
+        var cursorPos = Mouse.current.position.ReadValue();
+        var inGameCursorPos = Camera.main.ScreenToWorldPoint(new Vector3(cursorPos.x, cursorPos.y, -Camera.main.transform.position.z));
+        Launch(inGameCursorPos.x, inGameCursorPos.y);
+    }
+
+    public override void Launch(float x, float y) {
+        State = WeaponStatus.Active;
     }
 }
 }
