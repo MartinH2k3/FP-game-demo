@@ -49,6 +49,12 @@ public abstract class Projectile: MonoBehaviour
         }
     }
 
+    public virtual void HitWall() {
+        if (destroyedOnHit) {
+            Destroy(gameObject);
+        }
+    }
+
     public abstract void Launch();
 
     public abstract void Launch(float x, float y);

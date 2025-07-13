@@ -8,11 +8,6 @@ public class Axe : ThrowableWeapon {
     [SerializeField] private GameObject axeHead;
     [SerializeField] private GameObject axeHandle;
 
-    public override void Launch() {
-        this.SetVelocity(speed, 0);
-        State = WeaponStatus.Active;
-    }
-
     public override void Launch(float x, float y) {
         var direction = (new Vector2(x, y) - (Vector2)transform.position).normalized;
         this.SetVelocity(direction * speed);
