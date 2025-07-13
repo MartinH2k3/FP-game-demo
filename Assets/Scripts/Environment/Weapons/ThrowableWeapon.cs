@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Characters.Player;
 using Physics;
 using UnityEngine;
@@ -27,16 +28,13 @@ public abstract class ThrowableWeapon: Projectile, IPlayerWeapon, IPhysicsMovabl
 
     private void AllowPlayerToPickUp(Collider2D other) {
         if (State == WeaponStatus.Idle) {
-            Debug.Log("Trynna find the playa");
             var player = other.gameObject.GetComponent<PlayerMain>();
             if (player is null) return;
             player.pickupableWeapon = this;
-            Debug.Log("Me," + gameObject.name + " is pickupable by " + player.gameObject.name);
         }
     }
 
     private void CreatePickupRadius() {
-        Debug.Log("Creating pickup radius for " + gameObject.name);
         var pickupRadius = new GameObject("PickupRadius");
         pickupRadius.transform.SetParent(transform);
         pickupRadius.transform.localPosition = Vector3.zero;
@@ -56,6 +54,20 @@ public abstract class ThrowableWeapon: Projectile, IPlayerWeapon, IPhysicsMovabl
 
     public override void Launch(float x, float y) {
         State = WeaponStatus.Active;
+        var col = GetComponent<Collider2D>();
+        if (col is null) {
+            Debug.LogWarning("No collider found on " + gameObject.name + ". Cannot pause collider.");
+            return;
+        }
+        StartCoroutine(PauseCollider(col));
+
+
+    }
+
+    private IEnumerator PauseCollider(Collider2D col, float duration = 0.1f) {
+        col.enabled = false;
+        yield return new WaitForSeconds(duration);
+        col.enabled = true;
     }
 }
 }

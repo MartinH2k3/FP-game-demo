@@ -30,6 +30,7 @@ public class Kunai : ThrowableWeapon {
     }
 
     public override void Launch(float x, float y) {
+        base.Launch(x, y);
         var direction = (new Vector2(x, y) - (Vector2)transform.position).normalized;
         this.SetVelocity(direction * speed);
 
@@ -43,7 +44,6 @@ public class Kunai : ThrowableWeapon {
         base.OnCollisionEnter2D(other);
         if (HelperMethods.LayerInLayerMask(other.gameObject.layer, obstacleLayers)) {
             HitWall();
-            Debug.Log("Objection");
         }
         else if (HelperMethods.LayerInLayerMask(other.gameObject.layer, targetLayers)) {
             HitTarget(other.gameObject.GetComponent<Character>());

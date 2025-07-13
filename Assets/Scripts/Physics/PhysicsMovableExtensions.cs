@@ -47,6 +47,10 @@ public static class PhysicsMovableExtensions {
     public static Vector2 GetDirection(this IPhysicsMovable movable) {
         return movable.Rigidbody.linearVelocity.normalized;
     }
+
+    public static bool isKinematic(this IPhysicsMovable movable) {
+        return movable.Rigidbody.bodyType == RigidbodyType2D.Kinematic;
+    }
 }
 
 }
