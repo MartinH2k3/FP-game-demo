@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Characters.Player;
+using Helpers;
 using Physics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -19,7 +20,10 @@ public abstract class ThrowableWeapon: Projectile, IPlayerWeapon, IPhysicsMovabl
     }
 
     protected virtual void OnCollisionEnter2D(Collision2D other) {
-        AllowPlayerToPickUp(other.collider);
+        if (HelperMethods.LayerInLayerMask(other.gameObject.layer, LayerMask.NameToLayer("Player"))
+            && State == WeaponStatus.Idle) {
+            AllowPlayerToPickUp(other.collider);
+        }
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D other) {
