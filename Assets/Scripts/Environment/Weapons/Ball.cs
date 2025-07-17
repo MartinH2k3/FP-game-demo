@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Characters;
 using Helpers;
 using Physics;
@@ -11,7 +12,11 @@ public class Ball : ThrowableWeapon {
     private float _bouncinessTimer;
     [SerializeField] private float initialBounciness = 1f;
     [SerializeField] private Animator animator;
+	[SerializeField] private float idleThreshold = 0.1f; // Speed below which the ball is considered idle
 
+
+	private Dictionary<Character, float> _recentHits = new();
+	[SerializeField] private float hitCooldown = 0.5f;
     protected override void Update() {
         base.Update();
         if (_bouncinessTimer > 0) {
@@ -32,17 +37,27 @@ public class Ball : ThrowableWeapon {
         _bouncinessTimer = bouncinessDecayTime;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision) {
+    protected override void OnCollisionEnter2D(Collision2D collision) {
+        base.OnCollisionEnter2D(collision);
         if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, obstacleLayers)) {
             var incomingVelocity = this.GetVelocity();
             var normal = collision.contacts[0].normal;
             Vector2 reflectedVelocity = Vector2.Reflect(-collision.relativeVelocity, normal) * GetCurrentBounceFactor();
             Debug.Log("Bouncing at bounce factor: " + GetCurrentBounceFactor() + " from velocity: " + collision.relativeVelocity + " to reflected velocity: " + reflectedVelocity);
             this.SetVelocity(reflectedVelocity);
+			if (State == WeaponStatus.Active && reflectedVelocity.magnitude < idleThreshold) {
+				State = WeaponStatus.Idle;
+			}
         }
-        if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, targetLayers)) {
-            HitTarget(collision.gameObject.GetComponent<Character>());
+        if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, targetLayers) && State != WeaponStatus.Idle) {
+            var target = collision.gameObject.GetComponent<Character>();
+            if (!CanHitTarget(target)) return;
+            HitTarget(target);
         }
+    }
+
+    private bool CanHitTarget(Character target) {
+        return target is not null && (!_recentHits.ContainsKey(target) || Time.time - _recentHits[target] > hitCooldown);
     }
 
     private float GetCurrentBounceFactor() {
