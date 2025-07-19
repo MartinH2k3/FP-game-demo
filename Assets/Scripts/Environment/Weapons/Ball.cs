@@ -43,7 +43,6 @@ public class Ball : ThrowableWeapon {
             var incomingVelocity = this.GetVelocity();
             var normal = collision.contacts[0].normal;
             Vector2 reflectedVelocity = Vector2.Reflect(-collision.relativeVelocity, normal) * GetCurrentBounceFactor();
-            Debug.Log("Bouncing at bounce factor: " + GetCurrentBounceFactor() + " from velocity: " + collision.relativeVelocity + " to reflected velocity: " + reflectedVelocity);
             this.SetVelocity(reflectedVelocity);
 			if (State == WeaponStatus.Active && reflectedVelocity.magnitude < idleThreshold) {
 				State = WeaponStatus.Idle;
