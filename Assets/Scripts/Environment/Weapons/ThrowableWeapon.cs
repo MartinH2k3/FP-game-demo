@@ -20,21 +20,31 @@ public abstract class ThrowableWeapon: Projectile, IPhysicsMovable {
     }
 
     protected virtual void OnCollisionEnter2D(Collision2D other) {
-        if (HelperMethods.LayerInLayerMask(other.gameObject.layer, LayerMask.NameToLayer("Player"))
-            && State == WeaponStatus.Idle) {
-            AllowPlayerToPickUp(other.collider);
-        }
+
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D other) {
-        AllowPlayerToPickUp(other);
+        if (HelperMethods.LayerInLayerMask(other.gameObject.layer, LayerMask.GetMask("Player"))
+            && state == WeaponStatus.Idle) {
+            AllowPlayerToPickUp(other);
+        }
+    }
+
+    protected virtual void OnTriggerExit2D(Collider2D other) {
+        if (!HelperMethods.LayerInLayerMask(other.gameObject.layer, LayerMask.GetMask("Player"))) return;
+
+        var player = other.GetComponent<PlayerMain>();
+        if (player != null && player.NearbyWeapons.Contains(this)) {
+            player.NearbyWeapons.Remove(this);
+            Debug.Log("Removed");
+        }
     }
 
     private void AllowPlayerToPickUp(Collider2D other) {
-        if (State == WeaponStatus.Idle) {
+        if (state == WeaponStatus.Idle) {
             var player = other.gameObject.GetComponent<PlayerMain>();
             if (player is null) return;
-            player.pickupableWeapon = this;
+            player.NearbyWeapons.Add(this);
         }
     }
 
@@ -57,7 +67,7 @@ public abstract class ThrowableWeapon: Projectile, IPhysicsMovable {
     }
 
     public override void Launch(float x, float y) {
-        State = WeaponStatus.Active;
+        state = WeaponStatus.Active;
     }
 
 }

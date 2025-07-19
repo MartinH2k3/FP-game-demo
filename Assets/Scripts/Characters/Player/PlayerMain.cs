@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Environment.Weapons;
 using Managers;
 using Physics;
@@ -41,7 +42,7 @@ public class PlayerMain : Character
     // TODO add spell field
 
     // interaction
-    public ThrowableWeapon pickupableWeapon = null;
+    public HashSet<ThrowableWeapon> NearbyWeapons = new();
 
     // stats
     public BaseStats baseStats;
@@ -95,25 +96,6 @@ public class PlayerMain : Character
         _interact = _inputActions.Player.Interact;
         _interact.Enable();
         _interact.performed += Interact;
-    }
-
-    private void Interact(InputAction.CallbackContext context) {
-        if (!context.performed) return;
-
-        if (pickupableWeapon is not null) {
-            DropWeapon();
-            PickupWeapon();
-        }
-    }
-
-    private void DropWeapon() {
-        // TODO implement so that the weapon is dropped on the ground
-        rangedWeapon = null;
-    }
-
-    private void PickupWeapon() {
-        rangedWeapon = pickupableWeapon.Prefab();
-        Destroy(pickupableWeapon.gameObject);
     }
 
     private void OnDisable() {
@@ -173,6 +155,36 @@ public class PlayerMain : Character
             // using Math instead of Mathf, because in Update() method, Mathf.Sign(0) returns 1 (some sort of bug)
             this.SetVelocity(Math.Sign(_moveInput.x) * movementSpeed, rb.linearVelocity.y);
         }
+    }
+
+    private void Interact(InputAction.CallbackContext context) {
+        if (!context.performed) return;
+
+        if (NearbyWeapons.Count != 0) {
+            DropWeapon();
+            PickupWeapon();
+        }
+    }
+
+    private void DropWeapon() {
+        if (rangedWeapon is null) return;
+        Instantiate(rangedWeapon, transform.position, Quaternion.Euler(0, 0, -25));
+        rangedWeapon = null;
+    }
+
+    private void PickupWeapon() {
+        ThrowableWeapon closest = null;
+        float closestDist = float.MaxValue;
+        foreach (var weapon in NearbyWeapons) {
+            float dist = Vector2.Distance(transform.position, weapon.transform.position);
+            if (dist < closestDist) {
+                closest = weapon;
+                closestDist = dist;
+            }
+        }
+
+        rangedWeapon = closest.Prefab();
+        Destroy(closest!.gameObject);
     }
 
     public void Attack(InputAction.CallbackContext context) {
