@@ -58,20 +58,7 @@ public abstract class ThrowableWeapon: Projectile, IPlayerWeapon, IPhysicsMovabl
 
     public override void Launch(float x, float y) {
         State = WeaponStatus.Active;
-        var col = GetComponent<Collider2D>();
-        if (col is null) {
-            Debug.LogWarning("No collider found on " + gameObject.name + ". Cannot pause collider.");
-            return;
-        }
-        StartCoroutine(PauseCollider(col));
-
-
     }
 
-    private IEnumerator PauseCollider(Collider2D col, float duration = 0.1f) {
-        col.enabled = false;
-        yield return new WaitForSeconds(duration);
-        col.enabled = true;
-    }
 }
 }
