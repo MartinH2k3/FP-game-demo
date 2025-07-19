@@ -23,7 +23,7 @@ public class Ball : ThrowableWeapon {
             _bouncinessTimer -= Time.deltaTime;
             if (_bouncinessTimer <= 0) {
                 _bouncinessTimer = 0;
-                State = WeaponStatus.Idle;
+                state = WeaponStatus.Idle;
                 animator.SetTrigger("Deflated");
             }
         }
@@ -44,11 +44,11 @@ public class Ball : ThrowableWeapon {
             var normal = collision.contacts[0].normal;
             Vector2 reflectedVelocity = Vector2.Reflect(-collision.relativeVelocity, normal) * GetCurrentBounceFactor();
             this.SetVelocity(reflectedVelocity);
-			if (State == WeaponStatus.Active && reflectedVelocity.magnitude < idleThreshold) {
-				State = WeaponStatus.Idle;
+			if (state == WeaponStatus.Active && reflectedVelocity.magnitude < idleThreshold) {
+				state = WeaponStatus.Idle;
 			}
         }
-        if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, targetLayers) && State != WeaponStatus.Idle) {
+        if (HelperMethods.LayerInLayerMask(collision.gameObject.layer, targetLayers) && state != WeaponStatus.Idle) {
             var target = collision.gameObject.GetComponent<Character>();
             if (!CanHitTarget(target)) return;
             HitTarget(target);

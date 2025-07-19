@@ -8,8 +8,8 @@ using UnityEngine.InputSystem;
 
 namespace Environment.Weapons
 {
-public abstract class ThrowableWeapon: Projectile, IPlayerWeapon, IPhysicsMovable {
-    public WeaponStatus State { get; set; }
+public abstract class ThrowableWeapon: Projectile, IPhysicsMovable {
+    public WeaponStatus state;
     [SerializeField] private Rigidbody2D rb;
     public Rigidbody2D Rigidbody => rb;
     public bool singleUse = false;

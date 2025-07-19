@@ -11,12 +11,12 @@ public class Axe : ThrowableWeapon {
     public override void Launch(float x, float y) {
         var direction = (new Vector2(x, y) - (Vector2)transform.position).normalized;
         this.SetVelocity(direction * speed);
-        State = WeaponStatus.Active;
+        state = WeaponStatus.Active;
     }
 
     protected override void Update() {
         base.Update();
-        if (State != WeaponStatus.Active) return;
+        if (state != WeaponStatus.Active) return;
         var spinningSpeed = -this.GetVelocity().x * 50;
         transform.Rotate(0, 0, spinningSpeed * Time.deltaTime);
     }
@@ -35,7 +35,7 @@ public class Axe : ThrowableWeapon {
             if (!HitWithHead(other)) return;
 
             this.Freeze();
-            State = WeaponStatus.Idle;
+            state = WeaponStatus.Idle;
         }
     }
 

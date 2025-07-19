@@ -45,7 +45,7 @@ public class Kunai : ThrowableWeapon {
         if (HelperMethods.LayerInLayerMask(other.gameObject.layer, obstacleLayers)) {
             HitWall();
         }
-        else if (HelperMethods.LayerInLayerMask(other.gameObject.layer, targetLayers)) {
+        else if (HelperMethods.LayerInLayerMask(other.gameObject.layer, targetLayers) && state != WeaponStatus.Idle) {
             HitTarget(other.gameObject.GetComponent<Character>());
         }
 
