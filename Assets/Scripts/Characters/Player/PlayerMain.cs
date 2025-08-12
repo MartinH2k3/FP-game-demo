@@ -120,6 +120,13 @@ public class PlayerMain : Character
         ManageCooldowns();
     }
 
+    protected void FixedUpdate() {
+        // resetting flags for jumping - on collision will be called after this
+        _onGround = false;
+        _touchingRightWall = false;
+        _touchingLeftWall = false;
+    }
+
     private void SyncVisuals() {
         animator.SetBool("OnGround", _onGround);
         animator.SetBool("TouchingRightWall", _touchingRightWall);
@@ -337,12 +344,6 @@ public class PlayerMain : Character
                 }
             }
         }
-    }
-
-    private void CancelCollisions(Collision2D collision) {
-        _onGround = false;
-        _touchingRightWall = false;
-        _touchingLeftWall = false;
     }
 
     private void EvaluateTrigger(Collider2D collision) {
