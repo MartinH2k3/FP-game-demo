@@ -48,8 +48,14 @@ public static class PhysicsMovableExtensions {
         return movable.Rigidbody.linearVelocity.normalized;
     }
 
-    public static bool isKinematic(this IPhysicsMovable movable) {
+    public static bool IsKinematic(this IPhysicsMovable movable) {
         return movable.Rigidbody.bodyType == RigidbodyType2D.Kinematic;
+    }
+
+    public static void NeverSleep(this IPhysicsMovable movable) {
+        if (movable.Rigidbody is not null) {
+            movable.Rigidbody.sleepMode = RigidbodySleepMode2D.NeverSleep;
+        }
     }
 }
 

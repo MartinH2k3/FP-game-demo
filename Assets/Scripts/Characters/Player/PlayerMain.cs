@@ -73,6 +73,7 @@ public class PlayerMain : Character
     // Creating helper instances
     private void Awake() {
         _inputActions = new InputSystemActions();
+        this.NeverSleep();
     }
 
     private void OnEnable() {
@@ -374,7 +375,6 @@ public class PlayerMain : Character
         _activeJumpCooldown = 0;
         _dashedInAir = false;
     }
-
 
     // Combat
     public override void TakeDamage(int damage) {
