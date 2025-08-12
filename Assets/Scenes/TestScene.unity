@@ -5355,10 +5355,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 2560, y: 1440}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -5598,8 +5598,15 @@ MonoBehaviour:
   healthPoints: 100
   rb: {fileID: 1701016024}
   baseMovementSpeed: 3
+  _onGround: 0
   jumpStrength: 5
   jumpCooldown: 0.5
+  _touchingRightWall: 0
+  _touchingLeftWall: 0
+  _lastWallJump: 0
+  wallCoyoteTime: 0.15
+  _leftWallCoyoteTimer: 0
+  _rightWallCoyoteTimer: 0
   dashStrength: 15
   dashCooldown: 0.7
   dashDuration: 0.2

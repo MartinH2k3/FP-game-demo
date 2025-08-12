@@ -22,7 +22,10 @@ public class PlayerMain : Character
             // wall jumping
     private bool _touchingRightWall;
     private bool _touchingLeftWall;
-    private int _lastWallJump; // -1: left wall, 1: right wall, 0: no
+    private int _lastWallJump; // -1: left wall, 1: right wall, 0: none
+    [SerializeField] private float wallCoyoteTime = 0.15f; // time to jump after leaving the wall for better user experience
+    private float _leftWallCoyoteTimer;
+    private float _rightWallCoyoteTimer;
     // dashing
     public float dashStrength = 15f;
     [SerializeField] private float dashCooldown = 1f;
@@ -140,6 +143,8 @@ public class PlayerMain : Character
         _activeJumpCooldown = Math.Max(_activeJumpCooldown - Time.deltaTime, 0);
         _activeDashCooldown = Math.Max(_activeDashCooldown - Time.deltaTime, 0);
         _attackCooldown = Math.Max(_attackCooldown - Time.deltaTime, 0);
+        _leftWallCoyoteTimer = Math.Max(_leftWallCoyoteTimer - Time.deltaTime, 0);
+        _rightWallCoyoteTimer = Math.Max(_rightWallCoyoteTimer - Time.deltaTime, 0);
     }
 
     private void HandleMovement() {
@@ -254,12 +259,14 @@ public class PlayerMain : Character
             _lastWallJump = 0;
         } else if (!CanWallJump()){
             _doubleJumped = true;
-        } else if (_touchingRightWall) {
+        } else if (_touchingRightWall || _rightWallCoyoteTimer > 0) {
             _lastWallJump = 1;
             _doubleJumped = false;
-        } else if (_touchingLeftWall) {
+            _rightWallCoyoteTimer = 0f;
+        } else if (_touchingLeftWall || _leftWallCoyoteTimer > 0) {
             _lastWallJump = -1;
             _doubleJumped = false;
+            _leftWallCoyoteTimer = 0f;
         }
 
     }
@@ -273,9 +280,11 @@ public class PlayerMain : Character
     }
 
     private bool CanWallJump() {
-        return _touchingLeftWall && _lastWallJump != -1 ||
-               _touchingRightWall && _lastWallJump != 1;
+        var canLeft  = (_touchingLeftWall  || _leftWallCoyoteTimer  > 0) && _lastWallJump != -1;
+        var canRight = (_touchingRightWall || _rightWallCoyoteTimer > 0) && _lastWallJump != 1;
+        return canLeft || canRight;
     }
+
 
     private void Dash(InputAction.CallbackContext context) {
         if (context.performed) {
@@ -318,9 +327,6 @@ public class PlayerMain : Character
     private void OnCollisionStay2D(Collision2D collision) {
         EvaluateCollision(collision);
     }
-    private void OnCollisionExit2D(Collision2D collision) {
-        CancelCollisions(collision);
-    }
     private void OnTriggerStay2D(Collider2D collision) {
         EvaluateTrigger(collision);
     }
@@ -338,8 +344,14 @@ public class PlayerMain : Character
 
                 // still using Math.Abs if we want to add more functionality for wall touch later
                 if (Math.Abs(contact.normal.x) > 0.5f) {
-                    if (contact.normal.x > 0) _touchingRightWall = true;
-                    else if (contact.normal.x < 0) _touchingLeftWall = true;
+                    if (contact.normal.x > 0) {
+                        _touchingRightWall = true;
+                        _rightWallCoyoteTimer = wallCoyoteTime;
+                    }
+                    else if (contact.normal.x < 0) {
+                        _leftWallCoyoteTimer = wallCoyoteTime;
+                        _touchingLeftWall = true;
+                    }
 
                 }
             }
