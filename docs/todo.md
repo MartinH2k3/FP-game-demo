@@ -47,13 +47,27 @@
   - [x] If leave pickup range of one weapon, other weapon still can be picked up 
 - [ ] Make custom bounciness reusable, not only for bouncy ball
 
-# Unassigned
-## Gameplay mechanics
+# Okay, weekly goals don't work as I don't have time to work on this every week, so let's just make a todo list
+## Movement 
+### Jumping
+- [ ] Higher gravity when falling
+
+## Spells and weapons
+- [ ] Every prefab should have an icon attribute, then display active weapon and spell icon in the HUD
+## Camera
+- [ ] Zoom out when idle
+- [ ] Differentiate idle and moving camera for smoother transition back from lookahead
+## Tilemap
+- [ ] Fix ball stuck in the wall
+
+## Spells
 - [ ] Spell functionality
 - [ ] Spell casting
-- [ ] Weapons
-- [ ] Enemies
-- [ ] Inventory
+- [ ] Spells
+  - [ ] Fireball
+  - [ ] Ice Spike from the ground
+  - [ ] Force blast
+  
 ## Design
 - [ ] Art
   - [ ] Player
