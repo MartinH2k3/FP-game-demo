@@ -41,11 +41,9 @@ public abstract class ThrowableWeapon: Projectile, IPhysicsMovable {
     }
 
     private void AllowPlayerToPickUp(Collider2D other) {
-        if (state == WeaponStatus.Idle) {
-            var player = other.gameObject.GetComponent<PlayerMain>();
-            if (player is null) return;
-            player.NearbyWeapons.Add(this);
-        }
+        var player = other.gameObject.GetComponent<PlayerMain>();
+        if (player is null) return;
+        player.NearbyWeapons.Add(this);
     }
 
     private void CreatePickupRadius() {
