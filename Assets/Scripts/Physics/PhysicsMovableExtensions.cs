@@ -44,6 +44,13 @@ public static class PhysicsMovableExtensions {
         return movable.Rigidbody.linearVelocity;
     }
 
+    public static bool IsMoving(this IPhysicsMovable movable, bool includeX = true, bool includeY = true) {
+        if (movable.Rigidbody is null) return false;
+
+        var velocity = movable.Rigidbody.linearVelocity;
+        return (includeX && Mathf.Abs(velocity.x) > Mathf.Epsilon) || (includeY && Mathf.Abs(velocity.y) > Mathf.Epsilon);
+    }
+
     public static Vector2 GetDirection(this IPhysicsMovable movable) {
         return movable.Rigidbody.linearVelocity.normalized;
     }
